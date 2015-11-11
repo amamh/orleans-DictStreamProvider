@@ -1,0 +1,58 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrainInterfaces", "GrainInterfaces\GrainInterfaces.csproj", "{8799B6C8-14B6-4F8E-84D7-69158D7ECD70}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrainCollections", "GrainCollections\GrainCollections.csproj", "{0E176D54-8B6F-4C75-8E7A-3BF6CC0846BD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Producer", "Producer\Producer.csproj", "{86D3FDA9-FC32-4924-8213-2B495782511E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrleansServer", "OrleansServer\OrleansServer.csproj", "{D41ABFB6-A4E6-43A9-AF67-799E85D1F82F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\Client.csproj", "{42853F0A-E53A-4537-8F50-4BE5FD1A8C93}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DictStreamProvider", "DictionaryStreamProvider\DictStreamProvider.csproj", "{032B1FDF-A8E7-4111-87E1-38785B8841B5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DictStreamProviderShared", "DictStreamProviderShared\DictStreamProviderShared.csproj", "{E237DDBA-3DBD-4815-96A9-C50B50794C9F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8799B6C8-14B6-4F8E-84D7-69158D7ECD70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8799B6C8-14B6-4F8E-84D7-69158D7ECD70}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8799B6C8-14B6-4F8E-84D7-69158D7ECD70}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8799B6C8-14B6-4F8E-84D7-69158D7ECD70}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E176D54-8B6F-4C75-8E7A-3BF6CC0846BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E176D54-8B6F-4C75-8E7A-3BF6CC0846BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E176D54-8B6F-4C75-8E7A-3BF6CC0846BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E176D54-8B6F-4C75-8E7A-3BF6CC0846BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86D3FDA9-FC32-4924-8213-2B495782511E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86D3FDA9-FC32-4924-8213-2B495782511E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86D3FDA9-FC32-4924-8213-2B495782511E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86D3FDA9-FC32-4924-8213-2B495782511E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D41ABFB6-A4E6-43A9-AF67-799E85D1F82F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D41ABFB6-A4E6-43A9-AF67-799E85D1F82F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D41ABFB6-A4E6-43A9-AF67-799E85D1F82F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D41ABFB6-A4E6-43A9-AF67-799E85D1F82F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42853F0A-E53A-4537-8F50-4BE5FD1A8C93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42853F0A-E53A-4537-8F50-4BE5FD1A8C93}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42853F0A-E53A-4537-8F50-4BE5FD1A8C93}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42853F0A-E53A-4537-8F50-4BE5FD1A8C93}.Release|Any CPU.Build.0 = Release|Any CPU
+		{032B1FDF-A8E7-4111-87E1-38785B8841B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{032B1FDF-A8E7-4111-87E1-38785B8841B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{032B1FDF-A8E7-4111-87E1-38785B8841B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{032B1FDF-A8E7-4111-87E1-38785B8841B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E237DDBA-3DBD-4815-96A9-C50B50794C9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E237DDBA-3DBD-4815-96A9-C50B50794C9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E237DDBA-3DBD-4815-96A9-C50B50794C9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E237DDBA-3DBD-4815-96A9-C50B50794C9F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
