@@ -100,7 +100,7 @@ namespace OrleansServer
         {
             string deploymentId = null;
 
-            string configFileName = "DevTestServerConfiguration.xml";
+            string configFileName = "ServerConfiguration.xml";
             string siloName = Dns.GetHostName(); // Default to machine name
 
             int argPos = 1;

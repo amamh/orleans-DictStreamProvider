@@ -39,8 +39,8 @@ namespace DictStreamProvider
     {
         private readonly LinkedList<SimpleQueueCacheItem> _cachedMessages;
 
-        private readonly LinkedList<SimpleQueueCacheItem> _coldCache;
-        private readonly Dictionary<string, LinkedListNode<SimpleQueueCacheItem>> _coldCacheLookup;
+        private readonly LinkedList<SimpleQueueCacheItem> _oldData;
+        private readonly Dictionary<string, LinkedListNode<SimpleQueueCacheItem>> _oldDataLookup;
 
         private StreamSequenceToken _lastSequenceTokenAddedToCache;
         private readonly int _maxCacheSize;
@@ -51,7 +51,7 @@ namespace DictStreamProvider
         public QueueId Id { get; private set; }
 
         internal EventSequenceToken OldestPossibleToken { get; } = new EventSequenceToken(0);
-        internal SimpleQueueCacheItem? LastMessage => _cachedMessages?.First?.Value ?? _coldCache?.First?.Value;
+        internal SimpleQueueCacheItem? LastMessage => _cachedMessages?.First?.Value ?? _oldData?.First?.Value;
 
         public int Size => _cachedMessages.Count;
 
@@ -61,8 +61,8 @@ namespace DictStreamProvider
         {
             Id = queueId;
             _cachedMessages = new LinkedList<SimpleQueueCacheItem>();
-            _coldCache = new LinkedList<SimpleQueueCacheItem>();
-            _coldCacheLookup = new Dictionary<string, LinkedListNode<SimpleQueueCacheItem>>();
+            _oldData = new LinkedList<SimpleQueueCacheItem>();
+            _oldDataLookup = new Dictionary<string, LinkedListNode<SimpleQueueCacheItem>>();
             _maxCacheSize = cacheSize;
 
             this._logger = logger;
@@ -111,8 +111,8 @@ namespace DictStreamProvider
                     itemsToRelease.Add(item.Batch);
                     bucket.UpdateNumItems(-1);
                     _cachedMessages.RemoveLast();
-                    // Save in cold cache
-                    AddToCold(item);
+                    // Save for replay
+                    Save(item);
                 }
                 else
                 {
@@ -168,8 +168,8 @@ namespace DictStreamProvider
 
             if (sequenceToken.Equals(OldestPossibleToken)) // 0
             {
-                if (_coldCache.Count != 0)
-                    SetCursor(cursor, _coldCache.Last);
+                if (_oldData.Count != 0)
+                    SetCursor(cursor, _oldData.Last);
                 else
                     // wait
                     ResetCursor(cursor, sequenceToken);
@@ -204,13 +204,12 @@ namespace DictStreamProvider
             }
             else if (sequenceToken.Older(oldestToken))
             {
-                Log(_logger, $"Warning: Trying to initialise with a token that's not in the cache and not equal to 0: {sequenceToken}, oldest in current cache: {oldestToken}, current cold cache count: {_coldCache.Count}\nWill replay all again by setting cursor to 0");
+                _logger.Warn(-1, $"Warning: Trying to initialise with a token that's not in the cache and not equal to 0: {sequenceToken}, oldest in current cache: {oldestToken}, current old data count: {_oldData.Count}\nWill replay all again by setting cursor to 0");
                 ResetCursor(cursor, OldestPossibleToken);
             }
             else // Shouldn't happen
             {
-                Log(_logger, "Cold cache logic failure in InitializeCursor. Requested token {0}, oldest available in cold cache {1}", sequenceToken, _coldCache.Last.Value.SequenceToken);
-                throw new QueueCacheMissException($"Cold cache logic failure in InitializeCursor. Requested token {sequenceToken}, oldest in current cache: {oldestToken}, current cold cache count: {_coldCache.Count}");
+                throw new QueueCacheMissException($"old data logic failure in InitializeCursor. Requested token {sequenceToken}, oldest in current cache: {oldestToken}, current old data count: {_oldData.Count}");
             }
         }
 
@@ -235,9 +234,6 @@ namespace DictStreamProvider
                 return cursor.IsSet && TryGetNextMessage(cursor, out batch);
             }
 
-            //var oldestToken = OldestMessage?.SequenceToken;
-            //Debug.Assert(oldestToken != null); // The cursor should have never been initialised if there were no messages
-            //Debug.Assert(oldestToken.Equals(OldestPossibleToken));
             Debug.Assert(cursor.SequenceToken.Newer(OldestPossibleToken) || cursor.SequenceToken.Equals(OldestPossibleToken));
 
             // Cursor now points to a valid message in the cache. Get it!
@@ -253,8 +249,8 @@ namespace DictStreamProvider
             }
             else // move to next
             {
-                // Done with cold cache?
-                if (cursor.Element == _coldCache.First)
+                // Done with old data?
+                if (cursor.Element == _oldData.First)
                 {
                     // Hot cache has nothing at the moment i.e. the cursor is now in sync
                     if (_cachedMessages.Count == 0)
@@ -277,7 +273,7 @@ namespace DictStreamProvider
 
         private void UpdateCursor(DictQueueCacheCursor cursor, LinkedListNode<SimpleQueueCacheItem> item)
         {
-            //Log(_logger, "UpdateCursor: {0} to item {1}", cursor, item.Value.Batch);
+            Log(_logger, "UpdateCursor: {0} to item {1}", cursor, item.Value.Batch);
 
             cursor.Element.Value.CacheBucket.UpdateNumCursors(-1); // remove from prev bucket
             cursor.Set(item);
@@ -348,26 +344,26 @@ namespace DictStreamProvider
             }
         }
 
-        private void AddToCold(SimpleQueueCacheItem item)
+        private void Save(SimpleQueueCacheItem item)
         {
             var batches = item.Batch.GetEvents<IObjectWithUniqueId<int>>();
 
             foreach (var tuple in batches)
             {
                 var message = tuple.Item1;
-                if (_coldCacheLookup.ContainsKey(message.Id))
+                if (_oldDataLookup.ContainsKey(message.Id))
                 {
-                    var node = _coldCacheLookup[message.Id];
-                    _coldCacheLookup[message.Id].Value = item;
-                    // Move it back to head so that whoever is in the middle of reading the cold cache will get the new value
-                    _coldCache.Remove(node);
-                    _coldCache.AddFirst(node);
+                    var node = _oldDataLookup[message.Id];
+                    _oldDataLookup[message.Id].Value = item;
+                    // Move it back to head so that whoever is in the middle of reading the queue will get the new value
+                    _oldData.Remove(node);
+                    _oldData.AddFirst(node);
                 }
                 else
                 {
                     var node = new LinkedListNode<SimpleQueueCacheItem>(item);
-                    _coldCacheLookup.Add(message.Id, node);
-                    _coldCache.AddFirst(node);
+                    _oldDataLookup.Add(message.Id, node);
+                    _oldData.AddFirst(node);
                 }
             }
         }
