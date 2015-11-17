@@ -4,13 +4,14 @@ using Orleans;
 using Orleans.Concurrency;
 using Orleans.Streams;
 using DictStreamProvider;
+using DataTypes;
 
 namespace GrainInterfaces
 {
     public interface ISampleDataGrain : IGrainWithIntegerKey
     {
-        Task SetRandomData(IObjectWithUniqueId<int> random);
-        Task<IAsyncStream<IObjectWithUniqueId<int>>> GetStream();
+        Task SetRandomData(IObjectWithUniqueId<Price> random);
+        Task<IAsyncStream<IObjectWithUniqueId<Price>>> GetStream();
 
         //Task<Immutable<LinkedList<TWrapper>>> Subscribe(IAsyncObserver<TWrapper> observer, bool recover);
     }

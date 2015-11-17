@@ -6,14 +6,15 @@ using Orleans;
 using Orleans.Concurrency;
 using Orleans.Streams;
 using DictStreamProvider;
+using DataTypes;
 
 namespace GrainCollections
 {
     public class SampleDataGrain : Orleans.Grain, ISampleDataGrain
     {
         private Guid _streamGuid;
-        private IAsyncStream<IObjectWithUniqueId<int>> _stream;
-        private LinkedList<IObjectWithUniqueId<int>> _historicalData;
+        private IAsyncStream<IObjectWithUniqueId<Price>> _stream;
+        private LinkedList<IObjectWithUniqueId<Price>> _historicalData;
         public const string ProviderToUse = "DSProvider";
         //public const string ProviderToUse = "SMSProvider";
         public const string StreamNamespace = "GlobalNamespace";
@@ -22,20 +23,20 @@ namespace GrainCollections
         {
             await base.OnActivateAsync();
 
-            _historicalData = new LinkedList<IObjectWithUniqueId<int>>();
+            _historicalData = new LinkedList<IObjectWithUniqueId<Price>>();
             _streamGuid = Guid.NewGuid();
             var streamProvider = GetStreamProvider(ProviderToUse);
-            _stream = streamProvider.GetStream<IObjectWithUniqueId<int>>(_streamGuid, StreamNamespace);
+            _stream = streamProvider.GetStream<IObjectWithUniqueId<Price>>(_streamGuid, StreamNamespace);
         }
 
-        public Task SetRandomData(IObjectWithUniqueId<int> random)
+        public Task SetRandomData(IObjectWithUniqueId<Price> random)
         {
             _historicalData.AddLast(random);
             _stream.OnNextAsync(random);
             return TaskDone.Done;
         }
 
-        public Task<IAsyncStream<IObjectWithUniqueId<int>>> GetStream()
+        public Task<IAsyncStream<IObjectWithUniqueId<Price>>> GetStream()
         {
             return Task.FromResult(_stream);
         }

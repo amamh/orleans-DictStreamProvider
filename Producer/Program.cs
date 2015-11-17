@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using GrainInterfaces;
 using Orleans;
 using GrainCollections;
+using DictStreamProvider;
+using DataTypes;
 
 namespace Producer
 {
@@ -29,10 +31,10 @@ namespace Producer
             for (int i = 0; i < 15; i++)
             {
                 var id = i % 10;
-                var value = i;
+                var value = new Price { p = i };
 
                 var grain = GrainClient.GrainFactory.GetGrain<ISampleDataGrain>(0);
-                var o = new IntWithId { Id = id.ToString(), Value = value };
+                var o = new PriceWithId { Id = id.ToString(), Value = value };
 
                 grain.SetRandomData(o).Wait();
                 Console.WriteLine($"Writing... {id} : {value}");
@@ -42,10 +44,10 @@ namespace Producer
             while (true)
             {
                 var id = 15 + j % 15;
-                var value = j;
+                var value = new Price { p = j };
 
                 var grain = GrainClient.GrainFactory.GetGrain<ISampleDataGrain>(0);
-                var o = new IntWithId {Id = id.ToString(), Value = value };
+                var o = new PriceWithId {Id = id.ToString(), Value = value };
 
                 grain.SetRandomData(o).Wait();
                 Console.WriteLine($"Writing... {id} : {value}");

@@ -346,7 +346,7 @@ namespace DictStreamProvider
 
         private void Save(SimpleQueueCacheItem item)
         {
-            var batches = item.Batch.GetEvents<IObjectWithUniqueId<int>>();
+            var batches = item.Batch.GetEvents<IObjectWithUniqueId<EntityType>>();
 
             foreach (var tuple in batches)
             {

@@ -53,6 +53,7 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestObserver.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -64,9 +65,17 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DataTypes\DataTypes.csproj">
+      <Project>{20868853-c7dd-42f5-9f63-0224c0168b62}</Project>
+      <Name>DataTypes</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DictionaryStreamProvider\DictStreamProvider.csproj">
       <Project>{032b1fdf-a8e7-4111-87e1-38785b8841b5}</Project>
       <Name>DictStreamProvider</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DictStreamProviderShared\DictStreamProviderShared.csproj">
+      <Project>{e237ddba-3dbd-4815-96a9-c50b50794c9f}</Project>
+      <Name>DictStreamProviderShared</Name>
     </ProjectReference>
     <ProjectReference Include="..\GrainCollections\GrainCollections.csproj">
       <Project>{0e176d54-8b6f-4c75-8e7a-3bf6cc0846bd}</Project>

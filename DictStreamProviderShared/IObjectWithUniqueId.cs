@@ -6,7 +6,12 @@ using System.Threading.Tasks;
 
 namespace DictStreamProvider
 {
-    public interface IObjectWithUniqueId<T>
+    [Serializable]
+    public class EntityType
+    {
+    }
+
+    public interface IObjectWithUniqueId<out T> where T : EntityType
     {
         string Id { get; }
         T Value { get; }

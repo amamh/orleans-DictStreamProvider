@@ -58,6 +58,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DataTypes\DataTypes.csproj">
+      <Project>{20868853-c7dd-42f5-9f63-0224c0168b62}</Project>
+      <Name>DataTypes</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DictStreamProviderShared\DictStreamProviderShared.csproj">
       <Project>{e237ddba-3dbd-4815-96a9-c50b50794c9f}</Project>
       <Name>DictStreamProviderShared</Name>

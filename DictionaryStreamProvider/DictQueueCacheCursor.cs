@@ -41,10 +41,10 @@ namespace DictStreamProvider
             {
                 throw new ArgumentNullException(nameof(cache));
             }
-            this._cache = cache;
-            this._streamGuid = streamGuid;
-            this._streamNamespace = streamNamespace;
-            this._logger = logger;
+            _cache = cache;
+            _streamGuid = streamGuid;
+            _streamNamespace = streamNamespace;
+            _logger = logger;
             _current = null;
             DictQueueCache.Log(logger, "SimpleQueueCacheCursor New Cursor for {0}, {1}", streamGuid, streamNamespace);
         }

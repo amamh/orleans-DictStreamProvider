@@ -5,6 +5,7 @@ using GrainInterfaces;
 using Orleans;
 using Orleans.Providers.Streams.Common;
 using Orleans.Streams;
+using DataTypes;
 
 namespace GrainCollections
 {
@@ -13,7 +14,7 @@ namespace GrainCollections
     /// </summary>
     public class TestObserver : Orleans.Grain, ITestObserver
     {
-        private StreamSubscriptionHandle<IObjectWithUniqueId<int>> _handler;
+        private StreamSubscriptionHandle<IObjectWithUniqueId<Price>> _handler;
         public async Task Subscribe()
         {
             var ccGrain = GrainFactory.GetGrain<ISampleDataGrain>(0);
@@ -28,9 +29,9 @@ namespace GrainCollections
             await _handler.UnsubscribeAsync();
         }
 
-        public Task OnNextAsync(IObjectWithUniqueId<int> item, StreamSequenceToken token = null)
+        public Task OnNextAsync(IObjectWithUniqueId<Price> item, StreamSequenceToken token = null)
         {
-            Console.WriteLine("{0} : {1}", item.Id, item.Value);
+            Console.WriteLine("{0} : {1}", item.Id, item.Value.p);
             return TaskDone.Done;
         }
 

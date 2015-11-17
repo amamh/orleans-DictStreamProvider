@@ -5,12 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using DictStreamProvider;
 
-namespace GrainCollections
+namespace DataTypes
 {
     [Serializable]
-    public class IntWithId : IObjectWithUniqueId<int>
+    public class PriceWithId : IObjectWithUniqueId<Price>
     {
         public string Id { get; set; }
-        public int Value { get; set; }
+        public Price Value { get; set; }
     }
 }
