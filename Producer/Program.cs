@@ -37,7 +37,7 @@ namespace Producer
                 var o = new PriceWithId { Id = id.ToString(), Value = value };
 
                 grain.SetRandomData(o).Wait();
-                Console.WriteLine($"Writing... {id} : {value}");
+                Console.WriteLine($"Writing... {id} : {value.p}");
             }
 
             var j = 20;
@@ -50,7 +50,7 @@ namespace Producer
                 var o = new PriceWithId {Id = id.ToString(), Value = value };
 
                 grain.SetRandomData(o).Wait();
-                Console.WriteLine($"Writing... {id} : {value}");
+                Console.WriteLine($"Writing... {id} : {value.p}");
 
                 j++;
                 Task.Delay(1000).Wait();

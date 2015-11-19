@@ -74,6 +74,7 @@
   <ItemGroup>
     <Content Include="ServerConfiguration.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </Content>
   </ItemGroup>
   <ItemGroup>
