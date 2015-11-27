@@ -52,16 +52,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DictBatchContainer.cs" />
+    <Compile Include="DictionaryStreamException.cs" />
     <Compile Include="DictQueueAdapter.cs" />
     <Compile Include="DictQueueAdapterFactory.cs" />
     <Compile Include="DictQueueAdapterReceiver.cs" />
-    <Compile Include="DictQueueCache.cs" />
-    <Compile Include="DictQueueAdapterCache.cs" />
-    <Compile Include="DictQueueCacheCursor.cs" />
+    <Compile Include="DictSequenceToken.cs" />
+    <Compile Include="MemoryCache\DictQueueCache.cs" />
+    <Compile Include="MemoryCache\DictQueueAdapterCache.cs" />
+    <Compile Include="MemoryCache\DictQueueCacheCursor.cs" />
     <Compile Include="DictStreamProvider.cs" />
     <Compile Include="LoggerExtensions.cs" />
-    <Compile Include="MyStreamFailureHandler.cs" />
+    <Compile Include="LoggerStreamFailureHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RedisCache\ICacheList.cs" />
+    <Compile Include="RedisCache\RedisCustomList.cs" />
+    <Compile Include="RedisCache\RedisQueueAdapterCache.cs" />
+    <Compile Include="RedisCache\RedisQueueCache.cs" />
+    <Compile Include="RedisCache\RedisQueueCacheCursor.cs" />
     <Compile Include="SimpleBatchContainer.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -73,6 +81,7 @@
       <Name>DictStreamProviderShared</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

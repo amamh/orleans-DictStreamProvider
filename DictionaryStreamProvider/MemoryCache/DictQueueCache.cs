@@ -5,7 +5,7 @@ using Orleans.Runtime;
 using Orleans.Streams;
 using System.Diagnostics;
 
-namespace DictStreamProvider
+namespace DictStreamProvider.MemoryCache
 {
     internal class CacheBucket
     {

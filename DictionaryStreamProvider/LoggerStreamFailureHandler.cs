@@ -6,11 +6,11 @@ using Orleans.Streams;
 
 namespace DictStreamProvider
 {
-    public class MyStreamFailureHandler : IStreamFailureHandler
+    public class LoggerStreamFailureHandler : IStreamFailureHandler
     {
         private readonly Logger _logger;
 
-        public MyStreamFailureHandler(Logger logger)
+        public LoggerStreamFailureHandler(Logger logger)
         {
             _logger = logger;
         }

@@ -57,11 +57,9 @@ namespace DictStreamProvider
             return false; // Consumer is not interested in any of these events, so don't send.
         }
 
-
-
         public override string ToString()
         {
-            return $"[PipeQueueBatchContainer:Stream={StreamGuid},#Items={_events.Count}]";
+            return $"[SimpleBatchContainer:Stream={StreamGuid},#Items={_events.Count}]";
         }
     }
 }

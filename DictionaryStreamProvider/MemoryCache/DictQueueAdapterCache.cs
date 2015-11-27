@@ -5,7 +5,7 @@ using Orleans.Providers.Streams.Common;
 using Orleans.Runtime;
 using Orleans.Streams;
 
-namespace DictStreamProvider
+namespace DictStreamProvider.MemoryCache
 {
     class DictQueueAdapterCache : IQueueAdapterCache
     {
