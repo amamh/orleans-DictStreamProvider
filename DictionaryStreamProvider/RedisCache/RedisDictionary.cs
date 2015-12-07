@@ -19,18 +19,16 @@ namespace DictStreamProvider.RedisCache
     /// A custom data structure with O(1) append/prepend and access. Does not support insertion.
     /// Internally this is using a Redis hash where keys are indices.
     /// </summary>
-    public class RedisCustomList<T> : IRedisCache<T>
+    public class RedisDictionary<T>
     {
         private readonly IDatabase _db;
         private readonly RedisKey _key;
         private readonly string _keySet;
         private readonly Logger _logger;
-        private long _lastIndx = 0;
-        private long _firstIndx = 0;
 
-        public long Count { get; private set; } = 0;
+        //public long Count { get; private set; } = 0;
 
-        public RedisCustomList(IDatabase db, string redisKey, Logger logger)
+        public RedisDictionary(IDatabase db, string redisKey, Logger logger)
         {
             _db = db;
             _logger = logger;
@@ -49,30 +47,50 @@ namespace DictStreamProvider.RedisCache
             }
         }
 
-        public T Get(DictSequenceToken token)
+        public T Get(string key)
         {
-            if (token.Keys.Length != 1)
-                throw new DictionaryStreamException("When saving to redis, we must separate a batchcontainer into multiple ones each containing only one event. This is a design choice that makes sense in the case of a dictionary stream");
-
-            RedisValue field = token.Keys[0];
-
+            RedisValue field = key;
             AssertExists(field);
-
             var bytes = _db.HashGet(_key, field);
             var item = SerializationManager.DeserializeFromByteArray<T>(bytes);
             return item;
         }
 
+        public T Get(DictStreamToken token)
+        {
+            if (token.Keys.Length != 1)
+                throw new DictionaryStreamException("When saving to redis, we must separate a batchcontainer into multiple ones each containing only one event. This is a design choice that makes sense in the case of a dictionary stream");
+
+            string key = token.Keys[0];
+            return Get(key);
+        }
+
+        public bool Put(string key, T @event)
+        {
+            RedisValue field = key;
+            var bytes = SerializationManager.SerializeToByteArray(@event);
+            RedisValue value = bytes;
+
+            if (!_db.HashSet(_key, field, value))
+                return false;
+            return true;
+        }
+
         public bool Put(DictBatchContainer batch)
         {
-            for (int i = 0; i < batch.EventsCount; i++)
+            // iterate over key (field) -> event (value)
+            foreach (var tup in batch.GetEvents<T>())
             {
-                RedisValue field = batch.TypedSequenceToken.Keys[i];
-                var @event = batch.Events[i];
-                var bytes = SerializationManager.SerializeToByteArray(@event);
-                RedisValue value = bytes;
+                if (!(tup.Item2 is DictStreamToken))
+                    throw new Exception("Code must be broken, a DictBatchContainer must use DictSequenceToken");
+                var token = (tup.Item2 as DictStreamToken);
+                if (!token.IsOneKey)
+                    throw new Exception($"Code must be broken, a token for one event should contain only one key. Token contains {token.Keys.Length} keys.");
 
-                if (!_db.HashSet(_key, field, value))
+                var key = token.Keys[0];
+                var @event = tup.Item1;
+
+                if (!Put(key, @event))
                     return false;
             }
             return true;
