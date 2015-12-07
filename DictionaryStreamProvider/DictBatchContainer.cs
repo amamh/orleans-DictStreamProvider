@@ -8,29 +8,43 @@ using System.Threading.Tasks;
 
 namespace DictStreamProvider
 {
+    /// <summary>
+    /// A BatchContainer that uses DictSequenceToken
+    /// </summary>
     public class DictBatchContainer : IBatchContainer
     {
         public int EventsCount { get { return Events.Count; } }
         public List<object> Events { get; private set; }
         private readonly Dictionary<string, object> _requestContext;
 
-        public DictSequenceToken TypedSequenceToken { get; }
+        public DictStreamToken TypedSequenceToken { get; }
         public StreamSequenceToken SequenceToken { get { return TypedSequenceToken; } }
 
         public Guid StreamGuid { get; }
 
         public string StreamNamespace { get; }
 
-        public DictBatchContainer(DictSequenceToken token, Guid streamGuid, string streamNamespace, List<object> events, Dictionary<string, object> requestContext)
+
+        private List<DictBatchContainer> _batchPerEvent;
+        /// <summary>
+        /// Split this batch into smaller ones each containing one event and a token that contains only one key
+        /// </summary>
+        public List<DictBatchContainer> BatchPerEvent
+        {
+            get
+            {
+                return _batchPerEvent ?? (_batchPerEvent = SplitIntoSmallBatches());
+            }
+        }
+
+        public DictBatchContainer(DictStreamToken token, Guid streamGuid, string streamNamespace, List<object> events, Dictionary<string, object> requestContext)
         {
             if (events == null)
                 throw new ArgumentNullException(nameof(events), "Message contains no events");
             if (token == null)
                 throw new ArgumentNullException(nameof(token));
-
             if (token.Keys.Length != events.Count)
                 throw new DictionaryStreamException("Number of keys in the token must equal the number of events");
-
 
             StreamGuid = streamGuid;
             StreamNamespace = streamNamespace;
@@ -39,8 +53,23 @@ namespace DictStreamProvider
             TypedSequenceToken = token;
         }
 
+        private List<DictBatchContainer> SplitIntoSmallBatches()
+        {
+            var list = new List<DictBatchContainer>(EventsCount);
+            for (int i = 0; i < EventsCount; i++)
+                list.Add(new DictBatchContainer(TypedSequenceToken.CreateTokenForKey(i), StreamGuid, StreamNamespace, new List<object>() { Events[i] }, _requestContext));
+
+            return list;
+        }
+
+        /// <summary>
+        /// For each event, there will be a new token
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         public IEnumerable<Tuple<T, StreamSequenceToken>> GetEvents<T>()
         {
+            // TODO: Cache this
             for (int i = 0; i < Events.Count; i++)
             {
                 if (Events[i] is T)
@@ -49,6 +78,7 @@ namespace DictStreamProvider
                 }
             }
         }
+        
 
         public bool ImportRequestContext()
         {
@@ -70,7 +100,7 @@ namespace DictStreamProvider
 
         public override string ToString()
         {
-            return $"[SimpleBatchContainer:Stream={StreamGuid},#Items={Events.Count}]";
+            return $"[DictBatchContainer:Stream={StreamGuid},#Items={Events.Count}]";
         }
     }
 }
