@@ -12,16 +12,18 @@ namespace DictStreamProvider
     /// Simply a collection of unique string keys, the order should not matter
     /// </summary>
     [Serializable]
-    public class DictSequenceToken : StreamSequenceToken
+    public class DictStreamToken : StreamSequenceToken
     {
         public string[] Keys { get; private set; }
 
-        public DictSequenceToken(IEnumerable<string> keys)
+        public bool IsOneKey => Keys.Length == 1;
+
+        public DictStreamToken(IEnumerable<string> keys)
         {
             CoreCtor(keys);
         }
 
-        public DictSequenceToken(params string[] keys)
+        public DictStreamToken(params string[] keys)
         {
             CoreCtor(keys);
         }
@@ -38,9 +40,9 @@ namespace DictStreamProvider
             Debug.Assert(NoDups(Keys));
         }
 
-        public DictSequenceToken CreateTokenForKey(int index)
+        public DictStreamToken CreateTokenForKey(int index)
         {
-            return new DictSequenceToken(Keys[index]);
+            return new DictStreamToken(Keys[index]);
         }
 
         private bool NoDups(string[] keys)
@@ -66,12 +68,12 @@ namespace DictStreamProvider
 
         public override bool Equals(StreamSequenceToken other)
         {
-            if (!(other is DictSequenceToken))
+            if (!(other is DictStreamToken))
                 return false;
-            return Equals(other as DictSequenceToken);
+            return Equals(other as DictStreamToken);
         }
 
-        public bool Equals(DictSequenceToken other)
+        public bool Equals(DictStreamToken other)
         {
             if (other?.Keys?.Length != Keys.Length)
                 return false;

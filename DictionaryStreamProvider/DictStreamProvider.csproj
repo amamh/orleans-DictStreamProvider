@@ -57,7 +57,6 @@
     <Compile Include="DictQueueAdapter.cs" />
     <Compile Include="DictQueueAdapterFactory.cs" />
     <Compile Include="DictQueueAdapterReceiver.cs" />
-    <Compile Include="DictSequenceToken.cs" />
     <Compile Include="MemoryCache\DictQueueCache.cs" />
     <Compile Include="MemoryCache\DictQueueAdapterCache.cs" />
     <Compile Include="MemoryCache\DictQueueCacheCursor.cs" />
