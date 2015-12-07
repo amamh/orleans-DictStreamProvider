@@ -18,10 +18,9 @@ namespace DictStreamProvider
         private IStreamQueueMapper _streamQueueMapper;
         private readonly ConcurrentDictionary<QueueId, Queue<byte[]>> _queues = new ConcurrentDictionary<QueueId, Queue<byte[]>>();
 
-        public DictQueueAdapter(IStreamQueueMapper streamQueueMapper, string name)
+        public DictQueueAdapter(IStreamQueueMapper streamQueueMapper)
         {
             _streamQueueMapper = streamQueueMapper;
-            Name = name;
         }
 
         public Task QueueMessageBatchAsync<T>(Guid streamGuid, string streamNamespace, IEnumerable<T> events, StreamSequenceToken token,
@@ -71,7 +70,7 @@ namespace DictStreamProvider
             return new DictQueueAdapterReceiver(queue);
         }
 
-        public string Name { get; private set; }
+        public string Name { get; } = "DictQueueAdapter";
         public bool IsRewindable { get; private set; } = true;
 
         public StreamProviderDirection Direction

@@ -99,7 +99,7 @@ namespace DictStreamProvider
 
         public Task<IQueueAdapter> CreateAdapter()
         {
-            var adapter = new DictQueueAdapter(_logger, GetStreamQueueMapper(), _providerName, _server, _databaseNum, "orleans");
+            var adapter = new DictQueueAdapter(GetStreamQueueMapper());
             return Task.FromResult<IQueueAdapter>(adapter);
         }
 
