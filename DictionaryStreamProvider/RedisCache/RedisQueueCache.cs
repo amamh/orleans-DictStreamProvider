@@ -15,52 +15,48 @@ namespace DictStreamProvider.RedisCache
 {
     public class QueueCacheRedis : IQueueCache
     {
-        private readonly Logger _logger;
-        private readonly RedisCustomList<IBatchContainer> _cache;
-
-        public QueueId Id { get; }
-        public int MaxAddCount { get; } = 1024; // some sensible number
-
-        public int Size => (int)_cache.Count; // WARNING
-
-        public QueueCacheRedis(QueueId id, Logger logger, IDatabase db)
+        public QueueId Id
         {
-            Id = id;
-            _logger = logger;
-            string redisHashName = $"{Environment.MachineName}-{DateTime.UtcNow}-orleans-pipecache-{id}";
-            _cache = new RedisCustomList<IBatchContainer>(db, redisHashName, _logger);
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public int MaxAddCount
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public int Size
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
         }
 
         public void AddToCache(IList<IBatchContainer> messages)
         {
-            foreach (var item in messages)
-                if (!_cache.RightPush(item))
-                    _logger.AutoError($"Couldn't add batch to cache. Namespace: {item.StreamNamespace}, Stream: {item.StreamGuid}, Queue Cache ID: {Id}");
+            throw new NotImplementedException();
         }
 
         public IQueueCacheCursor GetCacheCursor(Guid streamGuid, string streamNamespace, StreamSequenceToken token)
         {
-            if (token != null && !(token is SimpleSequenceToken))
-            {
-                // Null token can come from a stream subscriber that is just interested to start consuming from latest (the most recent event added to the cache).
-                throw new ArgumentOutOfRangeException("token", "token must be of type SimpleSequenceToken");
-            }
-
-            return new QueueCacheRedisCursor(_cache, streamNamespace, streamGuid, token as SimpleSequenceToken);
+            throw new NotImplementedException();
         }
 
         public bool IsUnderPressure()
         {
-            // FIXME
-            return false;
+            throw new NotImplementedException();
         }
 
         public bool TryPurgeFromCache(out IList<IBatchContainer> purgedItems)
         {
-            // FIXME
-            purgedItems = null;
-
-            return true;
+            throw new NotImplementedException();
         }
     }
 }

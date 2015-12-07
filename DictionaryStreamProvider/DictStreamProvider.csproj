@@ -67,7 +67,6 @@
     <Compile Include="LoggerExtensions.cs" />
     <Compile Include="LoggerStreamFailureHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RedisCache\ICacheList.cs" />
     <Compile Include="RedisCache\RedisDictionary.cs" />
     <Compile Include="RedisCache\RedisQueueAdapterCache.cs" />
     <Compile Include="RedisCache\RedisQueueCache.cs" />

@@ -31,7 +31,7 @@ namespace DictStreamProvider.RedisCache
 
         public IQueueCache CreateQueueCache(QueueId queueId)
         {
-            return _caches.AddOrUpdate(queueId, (id) => new QueueCacheRedis(id, _logger, _db), (id, queueCache) => queueCache);
+            throw new NotImplementedException();
         }
     }
 }
