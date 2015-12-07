@@ -32,7 +32,7 @@ namespace GrainCollections
         public Task SetRandomData(IObjectWithUniqueId<Price> random)
         {
             _historicalData.AddLast(random);
-            _stream.OnNextAsync(random);
+            _stream.OnNextAsync(random, new DictStreamToken(random.Id));
             return TaskDone.Done;
         }
 

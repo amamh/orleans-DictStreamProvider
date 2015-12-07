@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace DictStreamProvider
 {
+    [Serializable]
     /// <summary>
     /// A BatchContainer that uses DictSequenceToken
     /// </summary>

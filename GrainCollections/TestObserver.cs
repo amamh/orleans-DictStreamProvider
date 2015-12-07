@@ -21,7 +21,7 @@ namespace GrainCollections
             var stream = await ccGrain.GetStream();
             //var reference = this.AsReference<ITestObserver>();
             //_handler = await stream.SubscribeAsync(this, null);
-            _handler = await stream.SubscribeAsync(this, new EventSequenceToken(0));
+            _handler = await stream.SubscribeAsync(this);
         }
 
         public override async Task OnDeactivateAsync()

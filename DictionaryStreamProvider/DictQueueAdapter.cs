@@ -17,10 +17,15 @@ namespace DictStreamProvider
         //private Queue<string> _queue = new Queue<string>();
         private IStreamQueueMapper _streamQueueMapper;
         private readonly ConcurrentDictionary<QueueId, Queue<byte[]>> _queues = new ConcurrentDictionary<QueueId, Queue<byte[]>>();
+        private readonly Logger _logger;
 
-        public DictQueueAdapter(IStreamQueueMapper streamQueueMapper)
+        public DictQueueAdapter(Logger logger, IStreamQueueMapper streamQueueMapper, string name)
         {
+            _logger = logger;
             _streamQueueMapper = streamQueueMapper;
+            _queues = new ConcurrentDictionary<QueueId, Queue<byte[]>>();
+
+            Name = name;
         }
 
         public Task QueueMessageBatchAsync<T>(Guid streamGuid, string streamNamespace, IEnumerable<T> events, StreamSequenceToken token,
@@ -67,7 +72,7 @@ namespace DictStreamProvider
                 queue = _queues.GetOrAdd(queueId, tmpQueue);
             }
 
-            return new DictQueueAdapterReceiver(queue);
+            return new DictQueueAdapterReceiver(_logger, queueId, queue);
         }
 
         public string Name { get; } = "DictQueueAdapter";

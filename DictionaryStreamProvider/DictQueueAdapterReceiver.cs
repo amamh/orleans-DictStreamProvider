@@ -7,6 +7,7 @@ using Orleans;
 using Orleans.Providers.Streams.Common;
 using Orleans.Serialization;
 using Orleans.Streams;
+using Orleans.Runtime;
 
 namespace DictStreamProvider
 {
@@ -14,9 +15,12 @@ namespace DictStreamProvider
     {
         public QueueId Id { get; }
         private readonly Queue<byte[]> _queue;
-        public DictQueueAdapterReceiver(Queue<byte[]> queue)
+        private readonly Logger _logger;
+
+        public DictQueueAdapterReceiver(Logger logger, QueueId queueid, Queue<byte[]> queue)
         {
-            //_messages = queue;
+            _logger = logger;
+            Id = queueid;
             _queue = queue;
         }
 

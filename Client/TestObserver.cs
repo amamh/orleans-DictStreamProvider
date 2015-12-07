@@ -18,11 +18,13 @@ namespace Client
         {
             var ccGrain = GrainClient.GrainFactory.GetGrain<ISampleDataGrain>(0);
             var stream = await ccGrain.GetStream();
-            await stream.SubscribeAsync(this, new EventSequenceToken(0));
+            await stream.SubscribeAsync(this);
         }
         public Task OnNextAsync(IObjectWithUniqueId<Price> item, StreamSequenceToken token = null)
         {
-            Console.WriteLine("{0} : {1}", item.Id, item.Value.p);
+            var typedToken = token as DictStreamToken;
+
+            Console.WriteLine($"token first key: {typedToken?.Keys?[0]}, \t\titem: {item.Id} : {item.Value.p}");
             return TaskDone.Done;
         }
         public Task OnCompletedAsync()
