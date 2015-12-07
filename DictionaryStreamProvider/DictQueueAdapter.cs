@@ -9,86 +9,77 @@ using Orleans;
 using Orleans.Runtime;
 using Orleans.Serialization;
 using Orleans.Streams;
-using StackExchange.Redis;
 
 namespace DictStreamProvider
 {
     public class DictQueueAdapter : IQueueAdapter
     {
-        private readonly Logger _logger;
-        private readonly IStreamQueueMapper _streamQueueMapper;
-        private ConnectionMultiplexer _connection;
-        private readonly int _databaseNum;
-        private readonly string _server;
-        private IDatabase _database;
-        private readonly string _redisListBaseName;
+        //private Queue<string> _queue = new Queue<string>();
+        private IStreamQueueMapper _streamQueueMapper;
+        private readonly ConcurrentDictionary<QueueId, Queue<byte[]>> _queues = new ConcurrentDictionary<QueueId, Queue<byte[]>>();
 
-        public DictQueueAdapter(Logger logger, IStreamQueueMapper streamQueueMapper, string name, string server, int database, string redisListBaseName)
+        public DictQueueAdapter(IStreamQueueMapper streamQueueMapper, string name)
         {
-            _logger = logger;
             _streamQueueMapper = streamQueueMapper;
-            _databaseNum = database;
-            _server = server;
-            _redisListBaseName = redisListBaseName;
-
-            ConnectionMultiplexer.ConnectAsync(_server).ContinueWith(task =>
-            {
-                _connection = task.Result;
-                _database = _connection.GetDatabase(_databaseNum);
-                _logger.AutoInfo($"connection to Redis successful.");
-            });
-
             Name = name;
         }
 
         public Task QueueMessageBatchAsync<T>(Guid streamGuid, string streamNamespace, IEnumerable<T> events, StreamSequenceToken token,
             Dictionary<string, object> requestContext)
         {
-            if (_database == null)
-            {
-                _logger.AutoWarn($"Trying to write before connection is made to Redis. This batch of data was ignored.");
-                return TaskDone.Done;
-            }
-
             if (events == null)
-            {
                 throw new ArgumentNullException(nameof(events), "Trying to QueueMessageBatchAsync null data.");
-            }
+            if (token == null)
+                throw new ArgumentNullException(nameof(token));
+            if (!(token is DictStreamToken))
+                throw new ArgumentOutOfRangeException("Token must be of type DictStreamToken");
 
+            var typedToken = token as DictStreamToken;
+
+            // Get the queue
             var queueId = _streamQueueMapper.GetQueueForStream(streamGuid, streamNamespace);
-            var redisListName = GetRedisListName(queueId);
+            Queue<byte[]> queue;
+            if (!_queues.TryGetValue(queueId, out queue))
+            {
+                var tmpQueue = new Queue<byte[]>();
+                queue = _queues.GetOrAdd(queueId, tmpQueue);
+            }
 
             var eventsAsObjects = events.Cast<object>().ToList();
 
-            var container = new SimpleBatchContainer(streamGuid, streamNamespace, eventsAsObjects, requestContext);
+            if (eventsAsObjects.Count != typedToken.Keys.Length)
+                // TODO: What type of exception is this?
+                throw new Exception($"Number of keys in token {typedToken.Keys.Length} is not equal to number of events {eventsAsObjects.Count}.");
+
+            var container = new DictBatchContainer(typedToken, streamGuid, streamNamespace, eventsAsObjects, requestContext);
 
             var bytes = SerializationManager.SerializeToByteArray(container);
-
-            try
-            {
-                _database.ListLeftPush(redisListName, bytes);
-            }
-            catch (Exception exception)
-            {
-                _logger.AutoError($"failed to write to Redis list {redisListName}. Exception: {exception}");
-            }
+            queue.Enqueue(bytes);
 
             return TaskDone.Done;
         }
 
-        private string GetRedisListName(QueueId queueId)
-        {
-            return _redisListBaseName + queueId;
-        }
-
         public IQueueAdapterReceiver CreateReceiver(QueueId queueId)
         {
-            return new DictQueueAdapterReceiver(_logger, queueId, _database, GetRedisListName(queueId));
+            Queue<byte[]> queue;
+            if (!_queues.TryGetValue(queueId, out queue))
+            {
+                var tmpQueue = new Queue<byte[]>();
+                queue = _queues.GetOrAdd(queueId, tmpQueue);
+            }
+
+            return new DictQueueAdapterReceiver(queue);
         }
 
-        public string Name { get; }
-        public bool IsRewindable { get; } = true;
+        public string Name { get; private set; }
+        public bool IsRewindable { get; private set; } = true;
 
-        public StreamProviderDirection Direction => StreamProviderDirection.ReadWrite;
+        public StreamProviderDirection Direction
+        {
+            get
+            {
+                return StreamProviderDirection.ReadWrite;
+            }
+        }
     }
 }
