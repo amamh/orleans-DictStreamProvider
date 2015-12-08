@@ -10,53 +10,21 @@ using System.Text;
 using System.Threading.Tasks;
 using StackExchange.Redis;
 using Orleans.Providers.Streams.Common;
+using IterableDictionary;
 
 namespace DictStreamProvider.RedisCache
 {
-    public class QueueCacheRedis : IQueueCache
+    public class QueueCacheRedis : MemoryCache.DictQueueCache
     {
-        public QueueId Id
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        private readonly RedisDictionary<DictBatchContainer> _redisDict;
 
-        public int MaxAddCount
+        public QueueCacheRedis(QueueId id, Logger logger, IDatabase db) : base(id, logger)
         {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+            string redisHashName = $"{Environment.MachineName}-{DateTime.UtcNow}-orleans-dictcache-{id}";
+            _redisDict = new RedisDictionary<DictBatchContainer>(db, redisHashName, _logger);
+            var cache = new IterableDict<string, DictBatchContainer>(_redisDict);
 
-        public int Size
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        public void AddToCache(IList<IBatchContainer> messages)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IQueueCacheCursor GetCacheCursor(Guid streamGuid, string streamNamespace, StreamSequenceToken token)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool IsUnderPressure()
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool TryPurgeFromCache(out IList<IBatchContainer> purgedItems)
-        {
-            throw new NotImplementedException();
+            SetDict(cache);
         }
     }
 }

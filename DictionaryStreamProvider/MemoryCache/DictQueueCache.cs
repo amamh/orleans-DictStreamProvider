@@ -11,8 +11,8 @@ namespace DictStreamProvider.MemoryCache
 {
     public class DictQueueCache : IQueueCache
     {
-        private readonly Logger _logger;
-        private readonly IterableDict<string, DictBatchContainer> _dict;
+        protected readonly Logger _logger;
+        protected IterableDict<string, DictBatchContainer> _dict;
 
         public QueueId Id { get; }
         public int MaxAddCount { get; } = 1024; // some sensible number
@@ -21,9 +21,17 @@ namespace DictStreamProvider.MemoryCache
 
         public DictQueueCache(QueueId id, Logger logger)
         {
+            if (id.GetNumericId() > 0)
+                throw new DictionaryStreamException("Id is greater than 0, this means there are more than one cache. This shouldn't happen in this type of stream.");
+
             Id = id;
             _logger = logger;
-            _dict = new IterableDict<string, DictBatchContainer>();
+            SetDict(new IterableDict<string, DictBatchContainer>());
+        }
+
+        protected void SetDict(IterableDict<string, DictBatchContainer> dict)
+        {
+            _dict = dict;
         }
 
         public void AddToCache(IList<IBatchContainer> messages)

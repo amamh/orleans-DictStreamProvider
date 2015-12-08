@@ -71,7 +71,6 @@
     <Compile Include="RedisCache\RedisDictionary.cs" />
     <Compile Include="RedisCache\RedisQueueAdapterCache.cs" />
     <Compile Include="RedisCache\RedisQueueCache.cs" />
-    <Compile Include="RedisCache\RedisQueueCacheCursor.cs" />
     <Compile Include="SimpleBatchContainer.cs" />
   </ItemGroup>
   <ItemGroup>

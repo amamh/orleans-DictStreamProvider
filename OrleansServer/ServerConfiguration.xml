@@ -10,7 +10,7 @@
     </StorageProviders>
     <StreamProviders>
       <Provider Type="Orleans.Providers.Streams.SimpleMessageStream.SimpleMessageStreamProvider" Name="SMSProvider"/>
-      <Provider Type="DictStreamProvider.DictStreamProvider" Name="DSProvider" UseRedisForCache="false" NumQueues="1"/>
+      <Provider Type="DictStreamProvider.DictStreamProvider" Name="DSProvider" UseRedisForCache="true"/>
     </StreamProviders>
     <SeedNode Address="127.0.0.1" Port="11111" />
   </Globals>
