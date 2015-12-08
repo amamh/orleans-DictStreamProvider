@@ -22,7 +22,8 @@ namespace DictStreamProvider.MemoryCache
         {
             try {
                 exception = null;
-                return _dict[_curosr.GetCurrent()];
+                var result = _dict[_curosr.GetCurrent()];
+                return result;
             }
             catch (Exception ex)
             {
@@ -33,7 +34,8 @@ namespace DictStreamProvider.MemoryCache
 
         public bool MoveNext()
         {
-            return _curosr.MoveNext();
+            var result = _curosr.MoveNext();
+            return result;
         }
 
         public void Refresh()

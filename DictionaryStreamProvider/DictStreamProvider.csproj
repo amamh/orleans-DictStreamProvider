@@ -31,8 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="IterableDictionary">
-      <HintPath>..\..\..\..\..\..\Users\AH87584\Documents\Visual Studio 2013\Projects\ConsoleApplication1\IterableDictionary\bin\Release\IterableDictionary.dll</HintPath>
+    <Reference Include="IterableDictionary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Users\AH87584\Documents\Visual Studio 2013\Projects\ConsoleApplication1\IterableDictionary\bin\Debug\IterableDictionary.dll</HintPath>
     </Reference>
     <Reference Include="Orleans, Version=1.0.0.0, Culture=neutral, PublicKeyToken=070f47935e3ed133, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Orleans.Core.1.0.10\lib\net45\Orleans.dll</HintPath>
