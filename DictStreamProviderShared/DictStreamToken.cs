@@ -79,7 +79,7 @@ namespace DictStreamProvider
                 return false;
             for (int i = 0; i < Keys.Length; i++)
             {
-                if (Keys[i].Equals(other.Keys[i]))
+                if (!Keys[i].Equals(other.Keys[i]))
                     return false;
             }
 
