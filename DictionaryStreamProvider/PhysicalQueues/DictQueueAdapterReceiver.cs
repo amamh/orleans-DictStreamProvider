@@ -9,19 +9,20 @@ using Orleans.Serialization;
 using Orleans.Streams;
 using Orleans.Runtime;
 
-namespace DictStreamProvider
+namespace DictStreamProvider.PhysicalQueues
 {
     public class DictQueueAdapterReceiver : IQueueAdapterReceiver
     {
         public QueueId Id { get; }
         private readonly Queue<byte[]> _queue;
         private readonly Logger _logger;
+        private readonly IProviderQueue _queueProvider;
 
-        public DictQueueAdapterReceiver(Logger logger, QueueId queueid, Queue<byte[]> queue)
+        public DictQueueAdapterReceiver(Logger logger, QueueId queueid, IProviderQueue queueProvider)
         {
             _logger = logger;
+            _queueProvider = queueProvider;
             Id = queueid;
-            _queue = queue;
         }
 
         public Task Initialize(TimeSpan timeout)
@@ -33,9 +34,18 @@ namespace DictStreamProvider
         public Task<IList<IBatchContainer>> GetQueueMessagesAsync(int maxCount)
         {
             var listOfMessages = new List<byte[]>();
-            for (int i = 0; i < maxCount; i++)
-                if (_queue.Count > 0)
-                    listOfMessages.Add(_queue.Dequeue());
+
+            var listLength = _queueProvider.Length(Id);
+            var max = Math.Min(maxCount, listLength);
+
+            for (var i = 0; i < max; i++)
+            {
+                var nextMsg = _queueProvider.Dequeue(Id);
+                if (nextMsg != null)
+                    listOfMessages.Add(nextMsg);
+                else
+                    _logger.AutoWarn("The queue returned a null message. This shouldn't happen. Ignored.");
+            }
 
             var list = (from m in listOfMessages select SerializationManager.DeserializeFromByteArray<DictBatchContainer>(m));
             var dictQueueAdapterBatchContainers = list as IList<DictBatchContainer> ?? list.ToList();
@@ -45,13 +55,18 @@ namespace DictStreamProvider
 
         public Task MessagesDeliveredAsync(IList<IBatchContainer> messages)
         {
-            //Console.WriteLine($"Delivered {messages.Count}, last one has token {messages.Last().SequenceToken}");
+            var count = messages == null ? 0 : messages.Count;
+            if (count == 0)
+                return TaskDone.Done;
+            var lastToken = messages?.Count != 0 ? messages?.Last()?.SequenceToken.ToString() : "--";
+            _logger.AutoVerbose($"Delivered {count}, last one has token {lastToken}");
             return TaskDone.Done;
         }
 
         public Task Shutdown(TimeSpan timeout)
         {
-            throw new NotImplementedException();
+            _logger.AutoInfo("Receiver requested to shutdown.");
+            return TaskDone.Done;
         }
     }
 }

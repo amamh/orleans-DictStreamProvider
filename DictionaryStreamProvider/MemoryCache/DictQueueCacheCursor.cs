@@ -4,6 +4,7 @@ using Orleans.Providers.Streams.Common;
 using Orleans.Runtime;
 using Orleans.Streams;
 using IterableDictionary;
+//using System.Diagnostics;
 
 namespace DictStreamProvider.MemoryCache
 {
@@ -23,6 +24,7 @@ namespace DictStreamProvider.MemoryCache
             try {
                 exception = null;
                 var result = _dict[_curosr.GetCurrent()];
+                //Debug.Assert(result.TypedSequenceToken.IsOneKey);
                 return result;
             }
             catch (Exception ex)

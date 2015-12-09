@@ -58,15 +58,18 @@
   <ItemGroup>
     <Compile Include="DictBatchContainer.cs" />
     <Compile Include="DictionaryStreamException.cs" />
-    <Compile Include="DictQueueAdapter.cs" />
+    <Compile Include="PhysicalQueues\DictQueueAdapter.cs" />
     <Compile Include="DictQueueAdapterFactory.cs" />
-    <Compile Include="DictQueueAdapterReceiver.cs" />
+    <Compile Include="PhysicalQueues\DictQueueAdapterReceiver.cs" />
     <Compile Include="MemoryCache\DictQueueCache.cs" />
     <Compile Include="MemoryCache\DictQueueAdapterCache.cs" />
     <Compile Include="MemoryCache\DictQueueCacheCursor.cs" />
     <Compile Include="DictStreamProvider.cs" />
     <Compile Include="LoggerExtensions.cs" />
     <Compile Include="LoggerStreamFailureHandler.cs" />
+    <Compile Include="PhysicalQueues\IProviderQueue.cs" />
+    <Compile Include="PhysicalQueues\Memory\MemoryQueueProvider.cs" />
+    <Compile Include="PhysicalQueues\Redis\RedisQueueProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RedisCache\RedisDictionary.cs" />
     <Compile Include="RedisCache\RedisQueueAdapterCache.cs" />

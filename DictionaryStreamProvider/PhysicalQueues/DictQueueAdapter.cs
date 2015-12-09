@@ -9,23 +9,25 @@ using Orleans;
 using Orleans.Runtime;
 using Orleans.Serialization;
 using Orleans.Streams;
+using Orleans.Providers;
 
-namespace DictStreamProvider
+namespace DictStreamProvider.PhysicalQueues
 {
     public class DictQueueAdapter : IQueueAdapter
     {
         //private Queue<string> _queue = new Queue<string>();
         private IStreamQueueMapper _streamQueueMapper;
-        private readonly ConcurrentDictionary<QueueId, Queue<byte[]>> _queues = new ConcurrentDictionary<QueueId, Queue<byte[]>>();
         private readonly Logger _logger;
+        private readonly IProviderQueue _queueProvider;
 
-        public DictQueueAdapter(Logger logger, IStreamQueueMapper streamQueueMapper, string name)
+        public DictQueueAdapter(Logger logger, IStreamQueueMapper streamQueueMapper, string providerName, IProviderConfiguration config, IProviderQueue queueProvider, int numOfQueues)
         {
+            Name = providerName; // WTF: If you set the name to anything else, the client won't receive any messages !?????
             _logger = logger;
             _streamQueueMapper = streamQueueMapper;
-            _queues = new ConcurrentDictionary<QueueId, Queue<byte[]>>();
+            _queueProvider = queueProvider;
 
-            Name = name;
+            _queueProvider.Init(_logger, config, providerName, numOfQueues);
         }
 
         public Task QueueMessageBatchAsync<T>(Guid streamGuid, string streamNamespace, IEnumerable<T> events, StreamSequenceToken token,
@@ -40,50 +42,29 @@ namespace DictStreamProvider
 
             var typedToken = token as DictStreamToken;
 
-            // Get the queue
             var queueId = _streamQueueMapper.GetQueueForStream(streamGuid, streamNamespace);
-            Queue<byte[]> queue;
-            if (!_queues.TryGetValue(queueId, out queue))
-            {
-                var tmpQueue = new Queue<byte[]>();
-                queue = _queues.GetOrAdd(queueId, tmpQueue);
-            }
 
             var eventsAsObjects = events.Cast<object>().ToList();
 
             if (eventsAsObjects.Count != typedToken.Keys.Length)
-                // TODO: What type of exception is this?
-                throw new Exception($"Number of keys in token {typedToken.Keys.Length} is not equal to number of events {eventsAsObjects.Count}.");
+                throw new DictionaryStreamException($"Number of keys in token {typedToken.Keys.Length} is not equal to number of events {eventsAsObjects.Count}.");
 
             var container = new DictBatchContainer(typedToken, streamGuid, streamNamespace, eventsAsObjects, requestContext);
 
             var bytes = SerializationManager.SerializeToByteArray(container);
-            queue.Enqueue(bytes);
+
+            _queueProvider.Enqueue(queueId, bytes);
 
             return TaskDone.Done;
         }
 
         public IQueueAdapterReceiver CreateReceiver(QueueId queueId)
         {
-            Queue<byte[]> queue;
-            if (!_queues.TryGetValue(queueId, out queue))
-            {
-                var tmpQueue = new Queue<byte[]>();
-                queue = _queues.GetOrAdd(queueId, tmpQueue);
-            }
-
-            return new DictQueueAdapterReceiver(_logger, queueId, queue);
+            return new DictQueueAdapterReceiver(_logger, queueId, _queueProvider);
         }
 
-        public string Name { get; } = "DictQueueAdapter";
-        public bool IsRewindable { get; private set; } = true;
-
-        public StreamProviderDirection Direction
-        {
-            get
-            {
-                return StreamProviderDirection.ReadWrite;
-            }
-        }
+        public string Name { get; }
+        public bool IsRewindable { get; } = true;
+        public StreamProviderDirection Direction => StreamProviderDirection.ReadWrite;
     }
 }
