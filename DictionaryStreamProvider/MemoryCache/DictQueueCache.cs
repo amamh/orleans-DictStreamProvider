@@ -47,6 +47,7 @@ namespace DictStreamProvider.MemoryCache
                 {
                     var key = smallBatch.TypedSequenceToken.Keys[0];
                     var value = smallBatch;
+                    // TODO: separate based on stream guid and namespace, we are currently merging all
                     _dict.AddOrUpdate(key, value);
                 }
             }
@@ -67,15 +68,14 @@ namespace DictStreamProvider.MemoryCache
 
         public bool IsUnderPressure()
         {
-            // FIXME
+            // TODO: How to measure pressure?
             return false;
         }
 
         public bool TryPurgeFromCache(out IList<IBatchContainer> purgedItems)
         {
-            // FIXME
+            // We don't purge
             purgedItems = null;
-
             return true;
         }
     }
