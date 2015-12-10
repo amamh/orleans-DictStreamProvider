@@ -12,11 +12,15 @@ namespace DictStreamProvider.MemoryCache
     {
         private readonly IterableLinkedListCursor<string> _curosr;
         private readonly IterableDict<string, DictBatchContainer> _dict;
+        private readonly string _streamNamespace;
+        private readonly Guid _streamGuid;
 
-        public DictQueueCacheCursor (IterableLinkedListCursor<string> internalCursor, IterableDict<string, DictBatchContainer> dict)
+        public DictQueueCacheCursor(IterableLinkedListCursor<string> internalCursor, IterableDict<string, DictBatchContainer> dict, string streamNamespace, Guid streamGuid)
         {
             _curosr = internalCursor;
             _dict = dict;
+            _streamNamespace = streamNamespace;
+            _streamGuid = streamGuid;
         }
 
         public IBatchContainer GetCurrent(out Exception exception)
@@ -36,8 +40,16 @@ namespace DictStreamProvider.MemoryCache
 
         public bool MoveNext()
         {
-            var result = _curosr.MoveNext();
-            return result;
+            while(_curosr.MoveNext())
+            {
+                // TODO: We are doing this again later, cache it
+                // TODO: Exception handling
+                var batch = _dict[_curosr.GetCurrent()];
+                if (batch.StreamNamespace == _streamNamespace && batch.StreamGuid == _streamGuid)
+                    return true;
+            }
+
+            return false;
         }
 
         public void Refresh()

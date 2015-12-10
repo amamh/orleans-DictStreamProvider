@@ -28,16 +28,22 @@ namespace Producer
                 }
             }
 
+            var grain = GrainClient.GrainFactory.GetGrain<ISampleDataGrain>(0);
+            var grain2 = GrainClient.GrainFactory.GetGrain<ISampleDataGrain>(1); // different stream
+
             for (int i = 0; i < 15; i++)
             {
                 var id = i % 10;
                 var value = new Price { p = i };
 
-                var grain = GrainClient.GrainFactory.GetGrain<ISampleDataGrain>(0);
                 var o = new PriceWithId { Id = id.ToString(), Value = value };
 
                 grain.SetRandomData(o).Wait();
-                Console.WriteLine($"Writing... {id} : {value.p}");
+                Console.WriteLine($"1- Writing... {id} : {value.p}");
+
+                o.Value.p += 1;
+                grain2.SetRandomData(o).Wait();
+                Console.WriteLine($"2- Writing... {id} : {value.p}");
             }
 
             var j = 20;
@@ -46,11 +52,15 @@ namespace Producer
                 var id = 15 + j % 15;
                 var value = new Price { p = j };
 
-                var grain = GrainClient.GrainFactory.GetGrain<ISampleDataGrain>(0);
                 var o = new PriceWithId {Id = id.ToString(), Value = value };
+                grain.SetRandomData(o).Wait();
 
                 grain.SetRandomData(o).Wait();
-                Console.WriteLine($"Writing... {id} : {value.p}");
+                Console.WriteLine($"1- Writing... {id} : {value.p}");
+
+                o.Value.p += 1;
+                grain2.SetRandomData(o).Wait();
+                Console.WriteLine($"2- Writing... {id} : {value.p}");
 
                 j++;
                 Task.Delay(1000).Wait();

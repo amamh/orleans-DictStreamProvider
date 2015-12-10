@@ -15,6 +15,7 @@ namespace GrainCollections
         private Guid _streamGuid;
         private IAsyncStream<IObjectWithUniqueId<Price>> _stream;
         private LinkedList<IObjectWithUniqueId<Price>> _historicalData;
+        private IStreamProvider _streamProvider;
         public const string ProviderToUse = "DSProvider";
         //public const string ProviderToUse = "SMSProvider";
         public const string StreamNamespace = "GlobalNamespace";
@@ -25,8 +26,8 @@ namespace GrainCollections
 
             _historicalData = new LinkedList<IObjectWithUniqueId<Price>>();
             _streamGuid = Guid.NewGuid();
-            var streamProvider = GetStreamProvider(ProviderToUse);
-            _stream = streamProvider.GetStream<IObjectWithUniqueId<Price>>(_streamGuid, StreamNamespace);
+            _streamProvider = GetStreamProvider(ProviderToUse);
+            _stream = _streamProvider.GetStream<IObjectWithUniqueId<Price>>(_streamGuid, StreamNamespace);
         }
 
         public Task SetRandomData(IObjectWithUniqueId<Price> random)

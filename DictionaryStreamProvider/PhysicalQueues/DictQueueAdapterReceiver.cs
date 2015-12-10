@@ -14,7 +14,6 @@ namespace DictStreamProvider.PhysicalQueues
     public class DictQueueAdapterReceiver : IQueueAdapterReceiver
     {
         public QueueId Id { get; }
-        private readonly Queue<byte[]> _queue;
         private readonly Logger _logger;
         private readonly IProviderQueue _queueProvider;
 
@@ -55,7 +54,7 @@ namespace DictStreamProvider.PhysicalQueues
 
         public Task MessagesDeliveredAsync(IList<IBatchContainer> messages)
         {
-            var count = messages == null ? 0 : messages.Count;
+            var count = messages?.Count ?? 0;
             if (count == 0)
                 return TaskDone.Done;
             var lastToken = messages?.Count != 0 ? messages?.Last()?.SequenceToken.ToString() : "--";

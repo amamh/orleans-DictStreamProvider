@@ -9,6 +9,7 @@ using IterableDictionary;
 
 namespace DictStreamProvider.MemoryCache
 {
+    // TODO: Create a dictoinary PER stream
     public class DictQueueCache : IQueueCache
     {
         protected readonly Logger _logger;
@@ -45,9 +46,11 @@ namespace DictStreamProvider.MemoryCache
                 var typedBatch = batch as DictBatchContainer;
                 foreach (var smallBatch in typedBatch.BatchPerEvent)
                 {
-                    var key = smallBatch.TypedSequenceToken.Keys[0];
+                    var id = smallBatch.TypedSequenceToken.Keys[0];
                     var value = smallBatch;
-                    // TODO: separate based on stream guid and namespace, we are currently merging all
+                    // Add the namespace and stream guid to the key so that we don't mix them. This doesn't affect reading
+                    var key = $"{smallBatch.StreamNamespace}-{smallBatch.StreamGuid}{id}";
+                    //var key = id;
                     _dict.AddOrUpdate(key, value);
                 }
             }
@@ -63,7 +66,7 @@ namespace DictStreamProvider.MemoryCache
             }
 
             var dictCursor = _dict.GetCursor();
-            return new DictQueueCacheCursor(dictCursor, _dict);
+            return new DictQueueCacheCursor(dictCursor, _dict, streamNamespace, streamGuid);
         }
 
         public bool IsUnderPressure()
