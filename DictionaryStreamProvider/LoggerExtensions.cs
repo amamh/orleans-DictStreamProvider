@@ -3,6 +3,7 @@ using Orleans.Runtime;
 
 namespace DictStreamProvider
 {
+    // TODO: Move out
     public static class LoggerExtensions
     {
         public static void AutoError(this Logger logger, string message = "", int code = -1, [CallerMemberName] string callerName = "")

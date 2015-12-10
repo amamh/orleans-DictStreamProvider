@@ -17,8 +17,7 @@ using System.Collections;
 namespace DictStreamProvider.RedisCache
 {
     /// <summary>
-    /// A custom data structure with O(1) append/prepend and access. Does not support insertion.
-    /// Internally this is using a Redis hash where keys are indices.
+    /// A Redis IDictionary partial implementation. It only supports required functions
     /// </summary>
     public class RedisDictionary<T> : IDictionary<string, T>
     {
