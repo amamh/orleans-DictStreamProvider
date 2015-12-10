@@ -16,13 +16,20 @@ namespace DictStreamProvider.RedisCache
 {
     public class QueueCacheRedis : MemoryCache.DictQueueCache
     {
+        private readonly IDatabase _db;
+
         public QueueCacheRedis(QueueId id, Logger logger, IDatabase db) : base(id, logger)
         {
-            string redisHashName = $"{Environment.MachineName}-{DateTime.UtcNow}-orleans-dictcache-{id}";
-            var redisDict = new RedisDictionary<DictBatchContainer>(db, redisHashName, _logger);
-            var cache = new IterableDict<string, DictBatchContainer>(redisDict);
+            _db = db;
+        }
 
-            SetDict(cache);
+        override protected IterableDict<string, DictBatchContainer> DictFactory(string streamNamespace, Guid streamGuid)
+        {
+            string redisHashName = $"{Environment.MachineName}-{DateTime.UtcNow}-orleans-dictcache-{streamNamespace}-{streamGuid}";
+            var redisDict = new RedisDictionary<DictBatchContainer>(_db, redisHashName, _logger);
+            var iterDict = new IterableDict<string, DictBatchContainer>(redisDict);
+
+            return iterDict;
         }
     }
 }

@@ -15,10 +15,10 @@ namespace DictStreamProvider.MemoryCache
         private readonly string _streamNamespace;
         private readonly Guid _streamGuid;
 
-        public DictQueueCacheCursor(IterableLinkedListCursor<string> internalCursor, IterableDict<string, DictBatchContainer> dict, string streamNamespace, Guid streamGuid)
+        public DictQueueCacheCursor(IterableDict<string, DictBatchContainer> dict, string streamNamespace, Guid streamGuid)
         {
-            _curosr = internalCursor;
             _dict = dict;
+            _curosr = _dict.GetCursor();
             _streamNamespace = streamNamespace;
             _streamGuid = streamGuid;
         }
