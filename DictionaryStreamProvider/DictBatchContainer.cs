@@ -16,17 +16,15 @@ namespace DictStreamProvider
     {
         public int EventsCount { get { return Events.Count; } }
         public List<object> Events { get; private set; }
+
         private readonly Dictionary<string, object> _requestContext;
+        private List<DictBatchContainer> _batchPerEvent;
 
         public DictStreamToken TypedSequenceToken { get; }
         public StreamSequenceToken SequenceToken { get { return TypedSequenceToken; } }
-
         public Guid StreamGuid { get; }
-
         public string StreamNamespace { get; }
-
-
-        private List<DictBatchContainer> _batchPerEvent;
+        
         /// <summary>
         /// Split this batch into smaller ones each containing one event and a token that contains only one key
         /// </summary>
@@ -70,7 +68,7 @@ namespace DictStreamProvider
         /// <returns></returns>
         public IEnumerable<Tuple<T, StreamSequenceToken>> GetEvents<T>()
         {
-            // TODO: Cache this
+            // TODO: Cache this. Or is it cached automatically?
             for (int i = 0; i < Events.Count; i++)
             {
                 if (Events[i] is T)
@@ -79,7 +77,6 @@ namespace DictStreamProvider
                 }
             }
         }
-        
 
         public bool ImportRequestContext()
         {

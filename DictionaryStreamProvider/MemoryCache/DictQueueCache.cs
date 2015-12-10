@@ -56,11 +56,8 @@ namespace DictStreamProvider.MemoryCache
                 var typedBatch = batch as DictBatchContainer;
                 foreach (var smallBatch in typedBatch.BatchPerEvent)
                 {
-                    var id = smallBatch.TypedSequenceToken.Keys[0];
+                    var key = smallBatch.TypedSequenceToken.Keys[0];
                     var value = smallBatch;
-                    // Add the namespace and stream guid to the key so that we don't mix them. This doesn't affect reading
-                    var key = $"{smallBatch.StreamNamespace}-{smallBatch.StreamGuid}{id}";
-                    //var key = id;
                     dict.AddOrUpdate(key, value);
                 }
             }

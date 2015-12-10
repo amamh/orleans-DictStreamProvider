@@ -4,6 +4,7 @@ using Orleans.Providers.Streams.Common;
 using Orleans.Runtime;
 using Orleans.Streams;
 using IterableDictionary;
+using System.Diagnostics;
 //using System.Diagnostics;
 
 namespace DictStreamProvider.MemoryCache
@@ -40,16 +41,16 @@ namespace DictStreamProvider.MemoryCache
 
         public bool MoveNext()
         {
-            while(_curosr.MoveNext())
+            // No need to check the batch for whether it's relevant to this stream or not, since there is a separate dictionary per stream, so this cursor is only for one stream
+            var result = _curosr.MoveNext();
+#if DEBUG
+            if (result) // make sure this cursor is indeed interating over messages only for the relevant stream
             {
-                // TODO: We are doing this again later, cache it
-                // TODO: Exception handling
                 var batch = _dict[_curosr.GetCurrent()];
-                if (batch.StreamNamespace == _streamNamespace && batch.StreamGuid == _streamGuid)
-                    return true;
+                Debug.Assert(batch.StreamNamespace == _streamNamespace && batch.StreamGuid == _streamGuid);
             }
-
-            return false;
+#endif
+            return result;
         }
 
         public void Refresh()
