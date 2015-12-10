@@ -11,6 +11,7 @@ using Orleans;
 
 namespace DictStreamProvider.PhysicalQueues.Redis
 {
+    // TODO: This really should be in a separate project
     public class RedisQueueProvider : IProviderQueue
     {
         private const string ServerParam = "Server";
@@ -48,7 +49,7 @@ namespace DictStreamProvider.PhysicalQueues.Redis
         public void Init(Logger logger, IProviderConfiguration config, string providerName, int numQueues)
         {
             _logger = logger;
-            _redisListBaseName = $"{Environment.MachineName}-{DateTime.UtcNow}-orleans-{providerName}-queue";
+            _redisListBaseName = $"orleans-{providerName}-queue";
             ReadRedisConnectionParams(config);
             _connection = ConnectionMultiplexer.ConnectAsync(_server).Result;
             _database = _connection.GetDatabase(_databaseNum);

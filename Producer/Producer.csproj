@@ -62,6 +62,10 @@
       <Project>{20868853-c7dd-42f5-9f63-0224c0168b62}</Project>
       <Name>DataTypes</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DictionaryStreamProvider\DictStreamProvider.csproj">
+      <Project>{032b1fdf-a8e7-4111-87e1-38785b8841b5}</Project>
+      <Name>DictStreamProvider</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DictStreamProviderShared\DictStreamProviderShared.csproj">
       <Project>{e237ddba-3dbd-4815-96a9-c50b50794c9f}</Project>
       <Name>DictStreamProviderShared</Name>

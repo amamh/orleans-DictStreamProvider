@@ -8,8 +8,9 @@
   <Gateway Address="localhost" Port="30000"/>
   <Statistics MetricsTableWriteInterval="30s" PerfCounterWriteInterval="30s" LogWriteInterval="300s" WriteLogStatisticsToTable="true"/>
   <Tracing DefaultTraceLevel="Verbose" TraceToConsole="false" TraceToFile="{0}-{1}.log"/>
-  <!--<StreamProviders>
+  <StreamProviders>
     <Provider Type="Orleans.Providers.Streams.SimpleMessageStream.SimpleMessageStreamProvider" Name="SMSProvider"/>
-    <Provider Type="StellaStreams.PipeStreamProvider" Name="PSProvider"/>
-  </StreamProviders>-->
+    <!--This line actually has to match the one in the server config...-->
+    <Provider Type="DictStreamProvider.DictStreamProvider" Name="DSProvider" UseRedisForCache="true" UseRedisForQueue="true"/>
+  </StreamProviders>
 </ClientConfiguration>
