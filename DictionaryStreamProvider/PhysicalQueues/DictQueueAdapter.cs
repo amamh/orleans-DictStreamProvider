@@ -15,19 +15,27 @@ namespace DictStreamProvider.PhysicalQueues
 {
     public class DictQueueAdapter : IQueueAdapter
     {
-        //private Queue<string> _queue = new Queue<string>();
-        private IStreamQueueMapper _streamQueueMapper;
         private readonly Logger _logger;
+        private readonly IStreamQueueMapper _streamQueueMapper;
+        private readonly IProviderConfiguration _config;
         private readonly IProviderQueue _queueProvider;
+        private readonly string _providerName;
+        private readonly int _numOfQueues;
 
         public DictQueueAdapter(Logger logger, IStreamQueueMapper streamQueueMapper, string providerName, IProviderConfiguration config, IProviderQueue queueProvider, int numOfQueues)
         {
             Name = providerName; // WTF: If you set the name to anything else, the client won't receive any messages !?????
+            _config = config;
             _logger = logger;
             _streamQueueMapper = streamQueueMapper;
             _queueProvider = queueProvider;
+            _providerName = providerName;
+            _numOfQueues = numOfQueues;
+        }
 
-            _queueProvider.Init(_logger, config, providerName, numOfQueues);
+        public Task Init()
+        {
+            return _queueProvider.Init(_logger, _config, _providerName, _numOfQueues);
         }
 
         public Task QueueMessageBatchAsync<T>(Guid streamGuid, string streamNamespace, IEnumerable<T> events, StreamSequenceToken token,

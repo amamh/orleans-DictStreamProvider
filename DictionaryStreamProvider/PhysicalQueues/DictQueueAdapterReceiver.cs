@@ -30,16 +30,16 @@ namespace DictStreamProvider.PhysicalQueues
             return TaskDone.Done;
         }
 
-        public Task<IList<IBatchContainer>> GetQueueMessagesAsync(int maxCount)
+        public async Task<IList<IBatchContainer>> GetQueueMessagesAsync(int maxCount)
         {
             var listOfMessages = new List<byte[]>();
 
-            var listLength = _queueProvider.Length(Id);
+            var listLength = await _queueProvider.Length(Id);
             var max = Math.Min(maxCount, listLength);
 
             for (var i = 0; i < max; i++)
             {
-                var nextMsg = _queueProvider.Dequeue(Id);
+                var nextMsg = await _queueProvider.Dequeue(Id);
                 if (nextMsg != null)
                     listOfMessages.Add(nextMsg);
                 else
@@ -49,7 +49,7 @@ namespace DictStreamProvider.PhysicalQueues
             var list = (from m in listOfMessages select SerializationManager.DeserializeFromByteArray<DictBatchContainer>(m));
             var dictQueueAdapterBatchContainers = list as IList<DictBatchContainer> ?? list.ToList();
 
-            return Task.FromResult<IList<IBatchContainer>>(dictQueueAdapterBatchContainers.ToList<IBatchContainer>());
+            return dictQueueAdapterBatchContainers.ToList<IBatchContainer>();
         }
 
         public Task MessagesDeliveredAsync(IList<IBatchContainer> messages)

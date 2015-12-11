@@ -121,7 +121,7 @@ namespace DictStreamProvider
         }
 
 
-        public Task<IQueueAdapter> CreateAdapter()
+        public async Task<IQueueAdapter> CreateAdapter()
         {
             // In AzureQueueAdapterFactory an adapter is made per call, so we do the same
             IQueueAdapter adapter;
@@ -129,7 +129,9 @@ namespace DictStreamProvider
             {
                 //adapter = new PhysicalQueues.Redis.RedisQueueAdapter(_logger, GetStreamQueueMapper(), _providerName, _server, _databaseNum);
                 var redisQueueProvider = new PhysicalQueues.Redis.RedisQueueProvider();
-                adapter = new PhysicalQueues.DictQueueAdapter(_logger, GetStreamQueueMapper(), _providerName, _config, redisQueueProvider, _numQueues);
+                var redisAdapter = new PhysicalQueues.DictQueueAdapter(_logger, GetStreamQueueMapper(), _providerName, _config, redisQueueProvider, _numQueues);
+                await redisAdapter.Init();
+                adapter = redisAdapter;
             }
             else
             {
@@ -137,7 +139,7 @@ namespace DictStreamProvider
                 adapter = new PhysicalQueues.DictQueueAdapter(_logger, GetStreamQueueMapper(), _providerName, _config, memoryQueueProvider, _numQueues);
             }
 
-            return Task.FromResult<IQueueAdapter>(adapter);
+            return adapter;
         }
 
         // In AzureQueueAdapterFactory an adapter is made per instance, so we do the same

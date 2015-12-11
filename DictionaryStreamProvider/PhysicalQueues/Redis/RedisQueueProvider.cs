@@ -23,43 +23,45 @@ namespace DictStreamProvider.PhysicalQueues.Redis
         private int _databaseNum;
 
         private ConnectionMultiplexer _connection;
-        private IDatabase _database;
+        private IDatabaseAsync _database;
         private Logger _logger;
         private string _redisListBaseName;
-
-        public byte[] Dequeue(QueueId queueId)
-        {
-            var redisListName = GetRedisListName(queueId);
-            return _database.ListRightPop(redisListName);
-        }
-
-        public void Enqueue(QueueId queueId, byte[] bytes)
-        {
-            var redisListName = GetRedisListName(queueId);
-            try
-            {
-                _database.ListLeftPush(redisListName, bytes);
-            }
-            catch (Exception exception)
-            {
-                _logger.AutoError($"failed to write to Redis list.\n Queue Id: {queueId}\nList name: {redisListName}\nException: {exception}");
-            }
-        }
-
-        public void Init(Logger logger, IProviderConfiguration config, string providerName, int numQueues)
+        public bool IsInitialised { get; private set; } = false;
+        public async Task Init(Logger logger, IProviderConfiguration config, string providerName, int numQueues)
         {
             _logger = logger;
             _redisListBaseName = $"orleans-{providerName}-queue";
             ReadRedisConnectionParams(config);
-            _connection = ConnectionMultiplexer.ConnectAsync(_server).Result;
+            _connection = await ConnectionMultiplexer.ConnectAsync(_server);
             _database = _connection.GetDatabase(_databaseNum);
             logger.AutoInfo($"connection to Redis successful.");
+            IsInitialised = true;
         }
 
-        public long Length(QueueId id)
+        public async Task<byte[]> Dequeue(QueueId queueId)
+        {
+            var redisListName = GetRedisListName(queueId);
+            return await _database.ListRightPopAsync(redisListName);
+        }
+
+        public Task Enqueue(QueueId queueId, byte[] bytes)
+        {
+            var redisListName = GetRedisListName(queueId);
+            try
+            {
+                return _database.ListLeftPushAsync(redisListName, bytes);
+            }
+            catch (Exception exception)
+            {
+                _logger.AutoError($"failed to write to Redis list.\n Queue Id: {queueId}\nList name: {redisListName}\nException: {exception}");
+                return TaskDone.Done;
+            }
+        }
+
+        public Task<long> Length(QueueId id)
         {
             var redisListName = GetRedisListName(id);
-            return _database.ListLength(redisListName);
+            return _database.ListLengthAsync(redisListName);
         }
         private void ReadRedisConnectionParams(IProviderConfiguration config)
         {

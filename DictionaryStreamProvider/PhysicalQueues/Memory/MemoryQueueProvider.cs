@@ -16,8 +16,9 @@ namespace DictStreamProvider.PhysicalQueues.Memory
     {
         private ConcurrentDictionary<QueueId, Queue<byte[]>> _queues;
         private Logger _logger;
+        public bool IsInitialised { get; private set; } = false;
 
-        public byte[] Dequeue(QueueId queueId)
+        public Task<byte[]> Dequeue(QueueId queueId)
         {
             var queue = GetQueue(queueId);
             if (queue.Count == 0)
@@ -26,25 +27,28 @@ namespace DictStreamProvider.PhysicalQueues.Memory
                 return null;
             }
 
-            return queue.Dequeue();
+            return Task.FromResult<byte[]>(queue.Dequeue());
         }
 
-        public void Enqueue(QueueId queueId, byte[] bytes)
+        public Task Enqueue(QueueId queueId, byte[] bytes)
         {
             var queue = GetQueue(queueId);
             queue.Enqueue(bytes);
+            return TaskDone.Done;
         }
 
-        public void Init(Logger logger, IProviderConfiguration config, string providerName, int numQueues)
+        public Task Init(Logger logger, IProviderConfiguration config, string providerName, int numQueues)
         {
             _logger = logger;
             _queues = new ConcurrentDictionary<QueueId, Queue<byte[]>>();
+            IsInitialised = true;
+            return TaskDone.Done;
         }
 
-        public long Length(QueueId queueId)
+        public Task<long> Length(QueueId queueId)
         {
             var queue = GetQueue(queueId);
-            return queue.Count;
+            return Task.FromResult<long>(queue.Count);
         }
 
         private Queue<byte[]> GetQueue(QueueId queueId)
