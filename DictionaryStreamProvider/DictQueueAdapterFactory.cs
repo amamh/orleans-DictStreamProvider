@@ -14,9 +14,9 @@ namespace DictStreamProvider
         private const int DefaultCacheSize = 4096;
         private int _cacheSize;
 
-        //private const string NumQueuesParam = "NumQueues";
-        //private const int DefaultNumQueues = 8; // keep as power of 2.
-        private int _numQueues = 1; // it must be only 1 queue so that we have only 1 cache so we can combine correctly.
+        private const string NumQueuesParam = "NumQueues";
+        private const int DefaultNumQueues = 8; // keep as power of 2.
+        private int _numQueues;
 
         private const string ServerParam = "Server";
         private const string DefaultServer = "localhost:6379";
@@ -60,13 +60,13 @@ namespace DictStreamProvider
             }
 
             // # queues
-            //string numQueuesString;
-            //_numQueues = DefaultNumQueues;
-            //if (config.Properties.TryGetValue(NumQueuesParam, out numQueuesString))
-            //{
-            //    if (!int.TryParse(numQueuesString, out _numQueues))
-            //        throw new ArgumentException($"{NumQueuesParam} invalid.  Must be int");
-            //}
+            string numQueuesString;
+            _numQueues = DefaultNumQueues;
+            if (config.Properties.TryGetValue(NumQueuesParam, out numQueuesString))
+            {
+                if (!int.TryParse(numQueuesString, out _numQueues))
+                    throw new ArgumentException($"{NumQueuesParam} invalid.  Must be int");
+            }
 
             // Use Redis for cache?
             string useRedisCache;

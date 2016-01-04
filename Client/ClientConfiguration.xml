@@ -10,6 +10,6 @@
   <Tracing DefaultTraceLevel="Verbose" TraceToConsole="false" TraceToFile="{0}-{1}.log"/>
   <StreamProviders>
     <Provider Type="Orleans.Providers.Streams.SimpleMessageStream.SimpleMessageStreamProvider" Name="SMSProvider"/>
-    <Provider Type="DictStreamProvider.DictStreamProvider" Name="DSProvider"/>
+    <Provider Type="DictStreamProvider.DictStreamProvider" Name="DSProvider" UseRedisForCache="true" UseRedisForQueue="true"/>
   </StreamProviders>
 </ClientConfiguration>

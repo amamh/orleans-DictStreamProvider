@@ -26,7 +26,7 @@ namespace Client
                 }
             }
             Console.WriteLine("Waiting");
-            Task.Delay(2000).Wait();
+            Task.Delay(5000).Wait();
             Console.WriteLine("Starting");
             //var testObserver = GrainClient.GrainFactory.GetGrain<ITestObserver>(0);
             var testObserver = new TestObserver();
