@@ -8,7 +8,7 @@ using System.Linq;
 using IterableDictionary;
 using System.Collections.Concurrent;
 
-namespace DictStreamProvider.MemoryCache
+namespace DictStreamProvider.Cache.Memory
 {
     // TODO: Create a dictoinary PER stream
     public class DictQueueCache : IQueueCache
@@ -34,9 +34,6 @@ namespace DictStreamProvider.MemoryCache
 
         public DictQueueCache(QueueId id, Logger logger)
         {
-            if (id.GetNumericId() > 0)
-                throw new DictionaryStreamException("Id is greater than 0, this means there are more than one cache. This shouldn't happen in this type of stream.");
-
             Id = id;
             _logger = logger;
             _dicts = new ConcurrentDictionary<string, ConcurrentDictionary<Guid, IterableDict<string, DictBatchContainer>>>();

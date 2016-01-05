@@ -14,7 +14,7 @@ using System.Collections;
 // This will at least reduce communication. In Python, a speedup of 5x can be achieved http://blog.jmoz.co.uk/python-redis-py-pipeline/
 // Will probably have a bigger impact if Redis is running on a different machine.
 
-namespace DictStreamProvider.RedisCache
+namespace DictStreamProvider.Cache.Redis
 {
     /// <summary>
     /// A Redis IDictionary partial implementation. It only supports required functions

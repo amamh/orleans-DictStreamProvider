@@ -32,7 +32,7 @@ namespace DictStreamProvider
 
         // TODO: This should be an enum to choose which physical queue to use
         private const string UseRedisForQueueParam = "UseRedisForQueue";
-        private const bool DefaultUseRedisForQueue = false;
+        private const bool DefaultUseRedisForQueue = true;
         private bool _useRedisForQueue;
 
         private string _providerName;
@@ -148,10 +148,10 @@ namespace DictStreamProvider
             if (_useRedisForCache)
             {
                 MakeSureRedisConnected();
-                return _adapterCache ?? (_adapterCache = new RedisCache.QueueAdapterCacheRedis(_logger, _db));
+                return _adapterCache ?? (_adapterCache = new Cache.Redis.QueueAdapterCacheRedis(_logger, _db));
             }
 
-            return _adapterCache ?? (_adapterCache = new MemoryCache.DictQueueAdapterCache(this, _cacheSize, _logger));
+            return _adapterCache ?? (_adapterCache = new Cache.Memory.DictQueueAdapterCache(this, _cacheSize, _logger));
         }
 
         public IStreamQueueMapper GetStreamQueueMapper()

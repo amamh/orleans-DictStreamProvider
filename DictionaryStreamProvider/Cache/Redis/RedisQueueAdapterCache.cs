@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DictStreamProvider.RedisCache
+namespace DictStreamProvider.Cache.Redis
 {
     public class QueueAdapterCacheRedis : IQueueAdapterCache
     {

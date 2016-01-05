@@ -12,9 +12,9 @@ using StackExchange.Redis;
 using Orleans.Providers.Streams.Common;
 using IterableDictionary;
 
-namespace DictStreamProvider.RedisCache
+namespace DictStreamProvider.Cache.Redis
 {
-    public class QueueCacheRedis : MemoryCache.DictQueueCache
+    public class QueueCacheRedis : Memory.DictQueueCache
     {
         private readonly IDatabase _db;
 
