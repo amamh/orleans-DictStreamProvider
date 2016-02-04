@@ -7,7 +7,7 @@ using IterableDictionary;
 using System.Diagnostics;
 //using System.Diagnostics;
 
-namespace DictStreamProvider.Cache.Memory
+namespace DictStreamProvider.Cache
 {
     public class DictQueueCacheCursor : IQueueCacheCursor
     {

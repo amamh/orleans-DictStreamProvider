@@ -26,10 +26,6 @@ namespace DictStreamProvider
         private const int DefaultRedisDb = -1;
         private int _databaseNum;
 
-        private const string UseRedisForCacheParam = "UseRedisForCache";
-        private const bool DefaultUseRedisForCache = false;
-        private bool _useRedisForCache;
-
         // TODO: This should be an enum to choose which physical queue to use
         private const string UseRedisForQueueParam = "UseRedisForQueue";
         private const bool DefaultUseRedisForQueue = true;
@@ -39,8 +35,6 @@ namespace DictStreamProvider
         private Logger _logger;
         private HashRingBasedStreamQueueMapper _streamQueueMapper;
         private IQueueAdapterCache _adapterCache;
-        private IConnectionMultiplexer _connection;
-        private IDatabase _db;
         private IProviderConfiguration _config;
         private IServiceProvider _serviceProvider;
 
@@ -51,15 +45,6 @@ namespace DictStreamProvider
             _providerName = providerName;
             _serviceProvider = serviceProvider;
 
-            // Cache size
-            //string cacheSizeString;
-            //_cacheSize = DefaultCacheSize;
-            //if (config.Properties.TryGetValue(CacheSizeParam, out cacheSizeString))
-            //{
-            //    if (!int.TryParse(cacheSizeString, out _cacheSize))
-            //        throw new ArgumentException($"{CacheSizeParam} invalid.  Must be int");
-            //}
-
             // # queues
             string numQueuesString;
             _numQueues = DefaultNumQueues;
@@ -69,14 +54,7 @@ namespace DictStreamProvider
                     throw new ArgumentException($"{NumQueuesParam} invalid.  Must be int");
             }
 
-            // Use Redis for cache?
-            string useRedisCache;
-            _useRedisForCache = DefaultUseRedisForCache;
-            if (config.Properties.TryGetValue(UseRedisForCacheParam, out useRedisCache))
-            {
-                if (!bool.TryParse(useRedisCache, out _useRedisForCache))
-                    throw new ArgumentException($"{UseRedisForCacheParam} invalid value {useRedisCache}");
-            }
+
 
             // Use Redis for queue?
             string useRedis;
@@ -86,13 +64,6 @@ namespace DictStreamProvider
                 if (!bool.TryParse(useRedis, out _useRedisForQueue))
                     throw new ArgumentException($"{UseRedisForQueueParam} invalid value {useRedis}");
             }
-
-            if (_useRedisForCache)
-                ReadRedisConnectionParams(config);
-
-            //if (_useRedisForQueue)
-            //    // this will be a duplicate step if we are using redis for cache, but it's better to separate the logic
-            //    ReadRedisConnectionParams(config);
 
             _streamQueueMapper = new HashRingBasedStreamQueueMapper(_numQueues, providerName);
         }
@@ -146,13 +117,7 @@ namespace DictStreamProvider
         // In AzureQueueAdapterFactory an adapter is made per instance, so we do the same
         public IQueueAdapterCache GetQueueAdapterCache()
         {
-            if (_useRedisForCache)
-            {
-                MakeSureRedisConnected();
-                return _adapterCache ?? (_adapterCache = new Cache.Redis.QueueAdapterCacheRedis(_logger, _db));
-            }
-
-            return _adapterCache ?? (_adapterCache = new Cache.Memory.DictQueueAdapterCache(this, _logger));
+            return _adapterCache ?? (_adapterCache = new Cache.DictQueueAdapterCache(this, _logger));
         }
 
         public IStreamQueueMapper GetStreamQueueMapper()
@@ -163,16 +128,6 @@ namespace DictStreamProvider
         public Task<IStreamFailureHandler> GetDeliveryFailureHandler(QueueId queueId)
         {
             return Task.FromResult<IStreamFailureHandler>(new LoggerStreamFailureHandler(_logger));
-        }
-
-        private void MakeSureRedisConnected()
-        {
-            if (_connection?.IsConnected == true)
-                return;
-
-            // Note: using non-async Connect doesn't work
-            _connection = ConnectionMultiplexer.ConnectAsync(_server).Result;
-            _db = _connection.GetDatabase(_databaseNum);
         }
     }
 }

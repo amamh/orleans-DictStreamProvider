@@ -5,11 +5,11 @@
 -->
 <ClientConfiguration xmlns="urn:orleans">
   <GatewayProvider ProviderType="Config"/>
-  <Gateway Address="localhost" Port="30000"/>
+  <Gateway Address="localhost" Port="40000"/>
   <Statistics MetricsTableWriteInterval="30s" PerfCounterWriteInterval="30s" LogWriteInterval="300s" WriteLogStatisticsToTable="true"/>
   <Tracing DefaultTraceLevel="Verbose" TraceToConsole="false" TraceToFile="{0}-{1}.log"/>
   <StreamProviders>
     <Provider Type="Orleans.Providers.Streams.SimpleMessageStream.SimpleMessageStreamProvider" Name="SMSProvider"/>
-    <Provider Type="DictStreamProvider.DictStreamProvider" Name="DSProvider" UseRedisForCache="true" UseRedisForQueue="true"/>
+    <Provider Type="DictStreamProvider.DictStreamProvider" Name="DSProvider"/>
   </StreamProviders>
 </ClientConfiguration>

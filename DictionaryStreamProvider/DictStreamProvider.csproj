@@ -65,9 +65,9 @@
     <Compile Include="PhysicalQueues\DictQueueAdapter.cs" />
     <Compile Include="DictQueueAdapterFactory.cs" />
     <Compile Include="PhysicalQueues\DictQueueAdapterReceiver.cs" />
-    <Compile Include="Cache\Memory\DictQueueCache.cs" />
-    <Compile Include="Cache\Memory\DictQueueAdapterCache.cs" />
-    <Compile Include="Cache\Memory\DictQueueCacheCursor.cs" />
+    <Compile Include="Cache\DictQueueCache.cs" />
+    <Compile Include="Cache\DictQueueAdapterCache.cs" />
+    <Compile Include="Cache\DictQueueCacheCursor.cs" />
     <Compile Include="DictStreamProvider.cs" />
     <Compile Include="LoggerExtensions.cs" />
     <Compile Include="LoggerStreamFailureHandler.cs" />
@@ -75,9 +75,6 @@
     <Compile Include="PhysicalQueues\Memory\MemoryQueueProvider.cs" />
     <Compile Include="PhysicalQueues\Redis\RedisQueueProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Cache\Redis\RedisDictionary.cs" />
-    <Compile Include="Cache\Redis\RedisQueueAdapterCache.cs" />
-    <Compile Include="Cache\Redis\RedisQueueCache.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

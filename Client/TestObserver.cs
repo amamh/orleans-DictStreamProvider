@@ -29,12 +29,14 @@ namespace Client
         }
         public Task OnCompletedAsync()
         {
-            throw new NotImplementedException();
+            Console.WriteLine("Done");
+            return TaskDone.Done;
         }
 
         public Task OnErrorAsync(Exception ex)
         {
-            throw new NotImplementedException();
+            Console.WriteLine(ex);
+            return TaskDone.Done;
         }
     }
 }

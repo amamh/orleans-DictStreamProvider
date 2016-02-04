@@ -8,7 +8,7 @@ using System.Linq;
 using IterableDictionary;
 using System.Collections.Concurrent;
 
-namespace DictStreamProvider.Cache.Memory
+namespace DictStreamProvider.Cache
 {
     // TODO: Create a dictoinary PER stream
     public class DictQueueCache : IQueueCache
