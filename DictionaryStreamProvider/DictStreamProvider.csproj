@@ -35,12 +35,16 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\Users\AH87584\Documents\Visual Studio 2013\Projects\ConsoleApplication1\IterableDictionary\bin\Debug\IterableDictionary.dll</HintPath>
     </Reference>
-    <Reference Include="Orleans, Version=1.0.0.0, Culture=neutral, PublicKeyToken=070f47935e3ed133, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Orleans.Core.1.0.10\lib\net45\Orleans.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="OrleansProviders, Version=1.0.0.0, Culture=neutral, PublicKeyToken=070f47935e3ed133, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Orleans.OrleansProviders.1.0.10\lib\net45\OrleansProviders.dll</HintPath>
+    <Reference Include="Orleans, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Orleans.Core.1.1.2\lib\net451\Orleans.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="OrleansProviders, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Orleans.OrleansProviders.1.1.2\lib\net451\OrleansProviders.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="StackExchange.Redis, Version=1.0.316.0, Culture=neutral, processorArchitecture=MSIL">
@@ -76,6 +80,7 @@
     <Compile Include="Cache\Redis\RedisQueueCache.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

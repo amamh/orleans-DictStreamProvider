@@ -13,11 +13,8 @@ namespace DictStreamProvider.Cache.Memory
         private readonly Logger _logger;
         private readonly ConcurrentDictionary<QueueId, IQueueCache> _caches;
 
-        public DictQueueAdapterCache(IQueueAdapterFactory factory, int cacheSize, Logger logger)
+        public DictQueueAdapterCache(IQueueAdapterFactory factory, Logger logger)
         {
-            if (cacheSize <= 0)
-                throw new ArgumentOutOfRangeException(nameof(cacheSize), "CacheSize must be a positive number.");
-            //this._cacheSize = cacheSize;
             this._logger = logger;
             _caches = new ConcurrentDictionary<QueueId, IQueueCache>();
         }

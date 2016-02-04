@@ -10,9 +10,9 @@ namespace DictStreamProvider
 {
     public class DictQueueAdapterFactory : IQueueAdapterFactory
     {
-        private const string CacheSizeParam = "CacheSize";
-        private const int DefaultCacheSize = 4096;
-        private int _cacheSize;
+        //private const string CacheSizeParam = "CacheSize";
+        //private const int DefaultCacheSize = 4096;
+        //private int _cacheSize;
 
         private const string NumQueuesParam = "NumQueues";
         private const int DefaultNumQueues = 8; // keep as power of 2.
@@ -42,22 +42,23 @@ namespace DictStreamProvider
         private IConnectionMultiplexer _connection;
         private IDatabase _db;
         private IProviderConfiguration _config;
+        private IServiceProvider _serviceProvider;
 
-        public void Init(IProviderConfiguration config, string providerName, Logger logger)
+        public void Init(IProviderConfiguration config, string providerName, Logger logger, IServiceProvider serviceProvider)
         {
             _logger = logger;
             _config = config;
             _providerName = providerName;
+            _serviceProvider = serviceProvider;
 
-            // TODO: Do we need this? We want to cache everything, we don't want to trim.
             // Cache size
-            string cacheSizeString;
-            _cacheSize = DefaultCacheSize;
-            if (config.Properties.TryGetValue(CacheSizeParam, out cacheSizeString))
-            {
-                if (!int.TryParse(cacheSizeString, out _cacheSize))
-                    throw new ArgumentException($"{CacheSizeParam} invalid.  Must be int");
-            }
+            //string cacheSizeString;
+            //_cacheSize = DefaultCacheSize;
+            //if (config.Properties.TryGetValue(CacheSizeParam, out cacheSizeString))
+            //{
+            //    if (!int.TryParse(cacheSizeString, out _cacheSize))
+            //        throw new ArgumentException($"{CacheSizeParam} invalid.  Must be int");
+            //}
 
             // # queues
             string numQueuesString;
@@ -151,7 +152,7 @@ namespace DictStreamProvider
                 return _adapterCache ?? (_adapterCache = new Cache.Redis.QueueAdapterCacheRedis(_logger, _db));
             }
 
-            return _adapterCache ?? (_adapterCache = new Cache.Memory.DictQueueAdapterCache(this, _cacheSize, _logger));
+            return _adapterCache ?? (_adapterCache = new Cache.Memory.DictQueueAdapterCache(this, _logger));
         }
 
         public IStreamQueueMapper GetStreamQueueMapper()

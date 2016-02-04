@@ -18,6 +18,7 @@ namespace OrleansServer
             //});
 
             InitSilo(args);
+            Console.ReadLine();
         }
 
         private static void InitSilo(string[] args)
