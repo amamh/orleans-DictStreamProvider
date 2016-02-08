@@ -61,9 +61,14 @@ namespace DictStreamProvider
 
         public override int CompareTo(StreamSequenceToken other)
         {
-            //if (Equals(other))
-            //    return 0;
+            if (Equals(other))
+                return 0;
             return 1;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as DictStreamToken);
         }
 
         public override bool Equals(StreamSequenceToken other)
