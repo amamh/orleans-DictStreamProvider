@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
-using GrainCollections;
-using GrainInterfaces;
 using Orleans;
 using Orleans.Streams;
 using DictStreamProvider;
 using Orleans.Providers.Streams.Common;
+using DataTypes;
 
 namespace Client
 {
@@ -28,9 +27,14 @@ namespace Client
             Console.WriteLine("Waiting");
             Task.Delay(5000).Wait();
             Console.WriteLine("Starting");
-            //var testObserver = GrainClient.GrainFactory.GetGrain<ITestObserver>(0);
+
+
+            var streamProvider = GrainClient.GetStreamProvider("DSProvider");
+            var stream = streamProvider.GetStream<Price>(new Guid("00000000-0000-0000-0000-000000000000"), "Global");
+
             var testObserver = new TestObserver();
-            testObserver.Subscribe().Wait();
+            stream.SubscribeAsync(testObserver).Wait();
+
             Console.ReadLine();
         }
     }

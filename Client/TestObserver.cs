@@ -1,6 +1,5 @@
 ﻿using DataTypes;
 using DictStreamProvider;
-using GrainInterfaces;
 using Orleans;
 using Orleans.Providers.Streams.Common;
 using Orleans.Streams;
@@ -12,19 +11,13 @@ using System.Threading.Tasks;
 
 namespace Client
 {
-    public class TestObserver : IAsyncObserver<IObjectWithUniqueId<Price>>
+    public class TestObserver : IAsyncObserver<Price>
     {
-        public async Task Subscribe()
-        {
-            var ccGrain = GrainClient.GrainFactory.GetGrain<ISampleDataGrain>(0);
-            var stream = await ccGrain.GetStream();
-            await stream.SubscribeAsync(this);
-        }
-        public Task OnNextAsync(IObjectWithUniqueId<Price> item, StreamSequenceToken token = null)
+        public Task OnNextAsync(Price item, StreamSequenceToken token = null)
         {
             var typedToken = token as DictStreamToken;
 
-            Console.WriteLine($"token first key: {typedToken?.Keys?[0]}, \t\titem: {item.Id} : {item.Value.p}");
+            Console.WriteLine($"token first key: {typedToken?.Keys?[0]}, \t\titem: {item.p}");
             return TaskDone.Done;
         }
         public Task OnCompletedAsync()

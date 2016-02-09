@@ -90,18 +90,6 @@
       <Project>{032b1fdf-a8e7-4111-87e1-38785b8841b5}</Project>
       <Name>DictStreamProvider</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DictStreamProviderShared\DictStreamProviderShared.csproj">
-      <Project>{e237ddba-3dbd-4815-96a9-c50b50794c9f}</Project>
-      <Name>DictStreamProviderShared</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GrainCollections\GrainCollections.csproj">
-      <Project>{0e176d54-8b6f-4c75-8e7a-3bf6cc0846bd}</Project>
-      <Name>GrainCollections</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GrainInterfaces\GrainInterfaces.csproj">
-      <Project>{8799b6c8-14b6-4f8e-84d7-69158d7ecd70}</Project>
-      <Name>GrainInterfaces</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="ClientConfiguration.xml">

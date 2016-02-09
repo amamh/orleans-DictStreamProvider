@@ -60,8 +60,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Deprecated\IObjectWithUniqueId.cs" />
     <Compile Include="DictBatchContainer.cs" />
     <Compile Include="DictionaryStreamException.cs" />
+    <Compile Include="DictStreamToken.cs" />
     <Compile Include="PhysicalQueues\DictQueueAdapter.cs" />
     <Compile Include="DictQueueAdapterFactory.cs" />
     <Compile Include="PhysicalQueues\DictQueueAdapterReceiver.cs" />
@@ -79,12 +81,6 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\DictStreamProviderShared\DictStreamProviderShared.csproj">
-      <Project>{e237ddba-3dbd-4815-96a9-c50b50794c9f}</Project>
-      <Name>DictStreamProviderShared</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

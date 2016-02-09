@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using GrainInterfaces;
 using Orleans;
-using GrainCollections;
 using DictStreamProvider;
 using DataTypes;
 
@@ -28,25 +26,20 @@ namespace Producer
                 }
             }
 
-            var grain = GrainClient.GrainFactory.GetGrain<ISampleDataGrain>(0);
-            var stream = grain.GetStream().Result;
-            var grain2 = GrainClient.GrainFactory.GetGrain<ISampleDataGrain>(1); // different stream
-            var stream2 = grain2.GetStream().Result;
+            var streamProvider = GrainClient.GetStreamProvider("DSProvider");
+            var stream = streamProvider.GetStream<Price>(new Guid("00000000-0000-0000-0000-000000000000"), "Global");
+            var stream2 = streamProvider.GetStream<Price>(new Guid("00000000-0000-0000-0000-000000000001"), "Global");
 
             for (int i = 0; i < 15; i++)
             {
                 var id = i % 10;
                 var value = new Price { p = i };
 
-                var o = new PriceWithId { Id = id.ToString(), Value = value };
-
-                //grain.SetRandomData(o).Wait();
-                stream.OnNextAsync(o, new DictStreamToken(o.Id));
+                stream.OnNextAsync(value, new DictStreamToken(id.ToString()));
                 Console.WriteLine($"1- Writing... {id} : {value.p}");
 
-                o.Value.p += 1;
-                //grain2.SetRandomData(o).Wait();
-                stream2.OnNextAsync(o, new DictStreamToken(o.Id));
+                value.p += 1;
+                stream2.OnNextAsync(value, new DictStreamToken(id.ToString()));
                 Console.WriteLine($"2- Writing... {id} : {value.p}");
             }
 
@@ -56,14 +49,11 @@ namespace Producer
                 var id = 15 + j % 15;
                 var value = new Price { p = j };
 
-                var o = new PriceWithId {Id = id.ToString(), Value = value };
-                //grain.SetRandomData(o).Wait();
-                stream.OnNextAsync(o, new DictStreamToken(o.Id));
+                stream.OnNextAsync(value, new DictStreamToken(id.ToString()));
                 Console.WriteLine($"1- Writing... {id} : {value.p}");
 
-                o.Value.p += 1;
-                //grain2.SetRandomData(o).Wait();
-                stream2.OnNextAsync(o, new DictStreamToken(o.Id));
+                value.p += 1;
+                stream2.OnNextAsync(value, new DictStreamToken(id.ToString()));
                 Console.WriteLine($"2- Writing... {id} : {value.p}");
 
                 j++;
