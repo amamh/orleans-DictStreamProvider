@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace DataTypes
 {
     [Serializable]
-    public class Price : EntityType
+    public class Price
     {
         public double p { get; set; }
     }

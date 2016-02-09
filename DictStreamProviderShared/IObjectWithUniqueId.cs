@@ -4,15 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-// TODO: Remove
 namespace DictStreamProvider
 {
-    [Serializable]
-    public class EntityType
-    {
-    }
-
-    public interface IObjectWithUniqueId<out T> where T : EntityType
+    public interface IObjectWithUniqueId<out T> where T : class
     {
         string Id { get; }
         T Value { get; }
