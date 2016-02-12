@@ -1,0 +1,1 @@
+nuget push DictionaryStreamProvider.1.0.0.1.symbols.nupkg nuget:nuget -Source http://169.172.134.41:81/nuget/default
